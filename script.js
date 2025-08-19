@@ -842,13 +842,19 @@ class ActDrawGame {
                 availablePages.push(i);
             }
         }
-        return availablePages.length > 0 ? availablePages[Math.floor(Math.random() * availablePages.length)] : null;
+        if (availablePages.length === 0) {
+            // If all pages are used, reset and start over
+            this.usedTVPages.clear();
+            return min;
+        }
+        return availablePages[Math.floor(Math.random() * availablePages.length)];
     }
 
     getUnusedTVSearchTerm(searchTerms) {
         const availableTerms = searchTerms.filter(term => !this.usedTVSearchTerms.has(term));
         if (availableTerms.length === 0) {
-            this.usedTVSearchTerms.clear(); // Reset if all used
+            // If all terms are used, reset and start over
+            this.usedTVSearchTerms.clear();
             return searchTerms[0];
         }
         return availableTerms[Math.floor(Math.random() * availableTerms.length)];
@@ -1123,7 +1129,7 @@ class ActDrawGame {
         // Voice announcements removed - too annoying and unreliable
 
         this.displayChallenge();
-        this.showModeSelection();
+        // showModeSelection() is now called from showRandomChallengeMode()
     }
 
     async refreshChallengesFromNewAPIPages() {
@@ -1175,10 +1181,38 @@ class ActDrawGame {
         
         if (challengeCard) challengeCard.classList.add('active');
         
+        // Add random "Draw It!" or "Act It!" display
+        this.showRandomChallengeMode();
+        
         // Update stats
         this.updateStats();
         
         console.log(`✅ Challenge displayed: ${this.currentChallenge.title} (${this.currentChallenge.type} - ${this.currentChallenge.category})`);
+    }
+
+    showRandomChallengeMode() {
+        // Randomly choose between "Draw It!" and "Act It!" for variety
+        const challengeModes = ['Draw It!', 'Act It!'];
+        const randomMode = challengeModes[Math.floor(Math.random() * challengeModes.length)];
+        
+        // Update the challenge mode display
+        const challengeMode = document.getElementById('challengeMode');
+        if (challengeMode) {
+            challengeMode.innerHTML = `
+                <div class="challenge-instruction">
+                    <span class="challenge-emoji">${randomMode === 'Draw It!' ? '🎨' : '🎭'}</span>
+                    <span class="challenge-text">${randomMode}</span>
+                </div>
+            `;
+        }
+        
+        // Show the mode selection
+        const modeSelection = document.getElementById('modeSelection');
+        if (modeSelection) {
+            modeSelection.style.display = 'block';
+        }
+        
+        console.log(`🎯 Random challenge mode: ${randomMode}`);
     }
 
     showReadyState() {
@@ -1340,7 +1374,7 @@ class ActDrawGame {
         this.currentChallenge = null;
         this.gameMode = null;
         
-        // Generate a new challenge automatically
+        // Generate a new challenge automatically with random mode
         this.generateChallenge();
     }
 

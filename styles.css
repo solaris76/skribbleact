@@ -227,6 +227,31 @@ body {
     box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
 }
 
+.challenge-instruction {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    padding: 10px;
+}
+
+.challenge-emoji {
+    font-size: 2.5rem;
+    animation: bounce 1s ease-in-out infinite alternate;
+}
+
+.challenge-text {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #92400e;
+    text-shadow: 0 2px 4px rgba(146, 64, 14, 0.2);
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0px); }
+    100% { transform: translateY(-5px); }
+}
+
 /* Timer Section */
 .timer-section {
     margin: 30px 0;
