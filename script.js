@@ -887,22 +887,7 @@ class ActDrawGame {
                 
                 // BBC Factual (30 new)
                 'Planet Earth', 'Blue Planet', 'Frozen Planet', 'Life', 'Human Planet',
-                'Africa', 'South Pacific', 'The Americas', 'Europe: A Natural History',
-                'Wild China', 'Wild Arabia', 'Wild Brazil', 'Wild Patagonia', 'Wild Alaska',
-                'Wild Russia', 'Wild India', 'Wild Japan', 'Wild Korea', 'Wild Thailand',
-                'Wild Vietnam', 'Wild Cambodia', 'Wild Laos', 'Wild Myanmar', 'Wild Bangladesh',
-                'Wild Nepal', 'Wild Bhutan', 'Wild Sri Lanka', 'Wild Maldives', 'Wild Seychelles',
-                'Wild Mauritius', 'Wild Madagascar', 'Wild Comoros',
-                
-                // BBC News & Current Affairs (30 new)
-                'BBC News at Six', 'BBC News at Ten', 'BBC Breakfast', 'BBC News at One',
-                'BBC News at Five', 'BBC News at Nine', 'BBC News at Eleven', 'BBC News at Twelve',
-                'BBC News at Two', 'BBC News at Three', 'BBC News at Four', 'BBC News at Seven',
-                'BBC News at Eight', 'BBC News at Thirteen', 'BBC News at Fourteen', 'BBC News at Fifteen',
-                'BBC News at Sixteen', 'BBC News at Seventeen', 'BBC News at Eighteen', 'BBC News at Nineteen',
-                'BBC News at Twenty', 'BBC News at Twenty-One', 'BBC News at Twenty-Two', 'BBC News at Twenty-Three',
-                'BBC News at Twenty-Four', 'BBC News at Twenty-Five', 'BBC News at Twenty-Six', 'BBC News at Twenty-Seven',
-                'BBC News at Twenty-Eight', 'BBC News at Twenty-Nine', 'BBC News at Thirty'
+               
             ];
             
             // Shuffle and return exactly 50
