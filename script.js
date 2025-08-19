@@ -1120,6 +1120,9 @@ class ActDrawGame {
         console.log(`✅ Selected challenge: "${this.currentChallenge.title}" (${this.currentChallenge.type})`);
         console.log(`📊 Remaining challenges: ${availableChallenges.length - 1}`);
 
+        // Announce the challenge type with excited voice!
+        this.announceChallengeType(this.currentChallenge);
+
         this.displayChallenge();
         this.showModeSelection();
     }
@@ -1337,6 +1340,9 @@ class ActDrawGame {
         this.resetChallengeCard();
         this.currentChallenge = null;
         this.gameMode = null;
+        
+        // Generate a new challenge automatically
+        this.generateChallenge();
     }
 
     resetChallengeCard() {
@@ -1426,6 +1432,63 @@ class ActDrawGame {
             muteBtn.innerHTML = '🔇 Mute';
             muteBtn.classList.add('btn-sound');
             muteBtn.classList.remove('btn-unmute');
+        }
+    }
+
+    // Add voice announcement function
+    announceChallengeType(challenge) {
+        try {
+            // Check if muted
+            if (this.isMuted) {
+                console.log('🔇 Voice announcement skipped - muted');
+                return;
+            }
+            
+            // Check if speech synthesis is supported
+            if ('speechSynthesis' in window) {
+                // Cancel any ongoing speech
+                speechSynthesis.cancel();
+                
+                // Create the announcement text based on challenge type
+                let announcement = '';
+                if (challenge.type === 'Film' || challenge.type === 'TV Show') {
+                    // Randomly choose between "Draw It!" and "Act It!" for variety
+                    const announcements = ['Draw It!', 'Act It!', 'Draw It!', 'Act It!'];
+                    announcement = announcements[Math.floor(Math.random() * announcements.length)];
+                } else {
+                    announcement = 'Draw It!';
+                }
+                
+                // Create speech synthesis utterance
+                const utterance = new SpeechSynthesisUtterance(announcement);
+                
+                // Configure for very excited, human-sounding voice
+                utterance.volume = 1.0; // Maximum volume
+                utterance.rate = 1.2;   // Slightly faster for excitement
+                utterance.pitch = 1.3;  // Higher pitch for enthusiasm
+                
+                // Try to find a good voice (prefer female voices for excitement)
+                const voices = speechSynthesis.getVoices();
+                if (voices.length > 0) {
+                    // Look for female voices first, then any available voice
+                    const preferredVoice = voices.find(voice => 
+                        voice.name.includes('Female') || 
+                        voice.name.includes('Samantha') || 
+                        voice.name.includes('Victoria') ||
+                        voice.name.includes('Alex') ||
+                        voice.name.includes('Karen')
+                    ) || voices[0];
+                    
+                    utterance.voice = preferredVoice;
+                }
+                
+                // Speak the announcement
+                speechSynthesis.speak(utterance);
+                
+                console.log(`🎤 Voice Announcement: "${announcement}" for ${challenge.type}: ${challenge.title}`);
+            }
+        } catch (error) {
+            console.error('❌ Voice announcement failed:', error);
         }
     }
 }

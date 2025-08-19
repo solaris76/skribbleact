@@ -210,6 +210,17 @@ body {
     box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
 }
 
+.btn-unmute {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+}
+
+.btn-unmute:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.6);
+}
+
 /* Mode Selection */
 .mode-selection {
     margin: 30px 0;
