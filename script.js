@@ -1120,8 +1120,7 @@ class ActDrawGame {
         console.log(`✅ Selected challenge: "${this.currentChallenge.title}" (${this.currentChallenge.type})`);
         console.log(`📊 Remaining challenges: ${availableChallenges.length - 1}`);
 
-        // Announce the challenge type with excited voice!
-        this.announceChallengeType(this.currentChallenge);
+        // Voice announcements removed - too annoying and unreliable
 
         this.displayChallenge();
         this.showModeSelection();
@@ -1411,100 +1410,12 @@ class ActDrawGame {
         });
         }
 
-        // Bind mute button
-        const muteBtn = document.getElementById('muteBtn');
-        if (muteBtn) {
-            muteBtn.addEventListener('click', () => {
-                this.toggleMute();
-            });
-        }
+        // Mute button removed - no longer needed
     }
 
-    toggleMute() {
-        this.isMuted = !this.isMuted;
-        const muteBtn = document.getElementById('muteBtn');
-        
-        if (this.isMuted) {
-            muteBtn.innerHTML = '🔊 Unmute';
-            muteBtn.classList.add('btn-unmute');
-            muteBtn.classList.remove('btn-sound');
-        } else {
-            muteBtn.innerHTML = '🔇 Mute';
-            muteBtn.classList.add('btn-sound');
-            muteBtn.classList.remove('btn-unmute');
-        }
-    }
+    // Mute functionality removed - no longer needed
 
-    // Add voice announcement function
-    announceChallengeType(challenge) {
-        try {
-            // Debug: Log the entire challenge object
-            console.log('🔍 Challenge object for voice announcement:', challenge);
-            console.log('🔍 Challenge type:', challenge?.type);
-            console.log('🔍 Challenge title:', challenge?.title);
-            
-            // Check if muted
-            if (this.isMuted) {
-                console.log('🔇 Voice announcement skipped - muted');
-                return;
-            }
-            
-            // Check if speech synthesis is supported
-            if ('speechSynthesis' in window) {
-                // Cancel any ongoing speech
-                speechSynthesis.cancel();
-                
-                // Create the announcement text based on challenge type
-                let announcement = '';
-                const challengeType = challenge?.type || challenge?.Type || 'Unknown';
-                console.log('🔍 Challenge type for voice:', challengeType);
-                
-                if (challengeType === 'Film' || challengeType === 'film') {
-                    announcement = 'Act It!';
-                    console.log('🎬 Film detected - announcing "Act It!"');
-                } else if (challengeType === 'TV Show' || challengeType === 'TV' || challengeType === 'tv') {
-                    announcement = 'Act It!';
-                    console.log('📺 TV Show detected - announcing "Act It!"');
-                } else {
-                    announcement = 'Draw It!';
-                    console.log('❓ Unknown type - announcing "Draw It!"');
-                }
-                
-                // Create speech synthesis utterance
-                const utterance = new SpeechSynthesisUtterance(announcement);
-                
-                // Configure for very excited, human-sounding voice
-                utterance.volume = 1.0; // Maximum volume
-                utterance.rate = 1.2;   // Slightly faster for excitement
-                utterance.pitch = 1.3;  // Higher pitch for enthusiasm
-                
-                // Try to find a good male voice
-                const voices = speechSynthesis.getVoices();
-                if (voices.length > 0) {
-                    // Look for male voices first, then any available voice
-                    const preferredVoice = voices.find(voice => 
-                        voice.name.includes('Male') || 
-                        voice.name.includes('Daniel') || 
-                        voice.name.includes('Tom') ||
-                        voice.name.includes('Fred') ||
-                        voice.name.includes('Ralph') ||
-                        voice.name.includes('Google UK English Male') ||
-                        voice.name.includes('Google US English Male')
-                    ) || voices[0];
-                    
-                    utterance.voice = preferredVoice;
-                    console.log('🎤 Selected voice:', preferredVoice?.name);
-                }
-                
-                // Speak the announcement
-                speechSynthesis.speak(utterance);
-                
-                console.log(`🎤 Voice Announcement: "${announcement}" for ${challenge?.type}: ${challenge?.title}`);
-            }
-        } catch (error) {
-            console.error('❌ Voice announcement failed:', error);
-        }
-    }
+    // Voice announcements removed - too annoying and unreliable
 }
 
 // Initialize the game when the page loads
