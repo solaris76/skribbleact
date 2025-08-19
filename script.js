@@ -585,130 +585,86 @@ class ActDrawGame {
     async fetchFallbackFilms() {
         try {
             console.log('🎬 Using fallback film database...');
-            const fallbackFilms = [
-                // Classic Films (Original 35)
+            
+            // Create categorized film arrays
+            const classicFilms = [
                 'The Godfather', 'Casablanca', 'Citizen Kane', 'Gone with the Wind', 'Lawrence of Arabia',
                 'The Wizard of Oz', 'Vertigo', 'Psycho', '2001: A Space Odyssey', 'Apocalypse Now',
-                'Taxi Driver', 'Goodfellas', 'The Shawshank Redemption', 'Pulp Fiction', 'Fight Club',
-                'The Matrix', 'Inception', 'Interstellar', 'The Dark Knight', 'Forrest Gump',
-                'Titanic', 'Avatar', 'Jurassic Park', 'Star Wars', 'The Lord of the Rings',
-                'Harry Potter', 'The Lion King', 'Toy Story', 'Finding Nemo', 'Up',
-                'The Incredibles', 'Monsters Inc', 'Shrek', 'Frozen', 'Moana',
-                
-                // Modern Blockbusters (35 new)
+                'Taxi Driver', 'Goodfellas', 'The Shawshank Redemption', 'Pulp Fiction', 'Fight Club'
+            ];
+            
+            const modernBlockbusters = [
                 'Black Panther', 'Avengers: Endgame', 'Spider-Man: No Way Home', 'Top Gun: Maverick',
                 'Dune', 'No Time to Die', 'The Batman', 'Wonder Woman', 'Aquaman',
                 'Joker', 'Parasite', 'Nomadland', 'The Shape of Water', 'La La Land',
-                'Mad Max: Fury Road', 'The Revenant', 'Birdman', '12 Years a Slave', 'Argo',
-                'The Artist', 'The King\'s Speech', 'The Hurt Locker', 'Slumdog Millionaire',
-                'The Departed', 'Crash', 'Million Dollar Baby', 'The Lord of the Rings: The Return of the King',
-                'Chicago', 'A Beautiful Mind', 'Gladiator', 'American Beauty', 'Shakespeare in Love',
-                'Titanic', 'The English Patient', 'Braveheart', 'Forrest Gump', 'Schindler\'s List',
-                
-                // International Films (35 new)
+                'Mad Max: Fury Road', 'The Revenant', 'Birdman', '12 Years a Slave', 'Argo'
+            ];
+            
+            const internationalFilms = [
                 'Parasite', 'Roma', 'Crouching Tiger, Hidden Dragon', 'Amélie', 'Life Is Beautiful',
                 'Cinema Paradiso', 'The Seventh Seal', '8½', 'La Dolce Vita', 'Bicycle Thieves',
-                'Rashomon', 'Seven Samurai', 'Spirited Away', 'My Neighbor Totoro', 'Princess Mononoke',
-                'Oldboy', 'The Handmaiden', 'Memories of Murder', 'Train to Busan', 'The Host',
-                'Run Lola Run', 'Good Bye Lenin!', 'The Lives of Others', 'Downfall', 'Das Boot',
-                'The Tin Drum', 'Wings of Desire', 'Run Lola Run', 'Good Bye Lenin!', 'The Lives of Others',
-                'Downfall', 'Das Boot', 'The Tin Drum', 'Wings of Desire', 'Run Lola Run',
-                
-                // Cult Classics (35 new)
+                'Rashomon', 'Seven Samurai', 'Spirited Away', 'My Neighbor Totoro', 'Princess Mononoke'
+            ];
+            
+            const cultClassics = [
                 'The Rocky Horror Picture Show', 'Donnie Darko', 'The Big Lebowski', 'Office Space',
                 'Shaun of the Dead', 'Hot Fuzz', 'Scott Pilgrim vs. the World', 'Kick-Ass',
-                'Superbad', 'The 40-Year-Old Virgin', 'Bridesmaids', 'Mean Girls', 'Legally Blonde',
-                'Clueless', '10 Things I Hate About You', 'She\'s All That', 'Notting Hill',
-                'Love Actually', 'Bridget Jones\'s Diary', 'The Devil Wears Prada', 'Mamma Mia!',
-                'Chicago', 'Moulin Rouge!', 'The Greatest Showman', 'La La Land', 'The Artist',
-                'The Shape of Water', 'Birdman', 'The Grand Budapest Hotel', 'Moonrise Kingdom',
-                'Fantastic Mr. Fox', 'Isle of Dogs', 'The French Dispatch', 'The Darjeeling Limited',
-                'Rushmore', 'Bottle Rocket', 'The Royal Tenenbaums',
-                
-                // Sci-Fi & Fantasy (35 new)
+                'Superbad', 'The 40-Year-Old Virgin', 'Bridesmaids', 'Mean Girls', 'Legally Blonde'
+            ];
+            
+            const sciFiFantasy = [
                 'Blade Runner', 'The Terminator', 'Terminator 2: Judgment Day', 'Aliens',
                 'Alien', 'Predator', 'The Thing', 'They Live', 'Escape from New York',
-                'Big Trouble in Little China', 'The Fifth Element', 'Total Recall', 'RoboCop',
-                'Minority Report', 'A.I. Artificial Intelligence', 'Ex Machina', 'Her',
-                'Arrival', 'Annihilation', 'Under the Skin', 'The Lobster', 'Dogtooth',
-                'The Killing of a Sacred Deer', 'The Favourite', 'Poor Things', 'The Whale',
-                'The Menu', 'Everything Everywhere All at Once', 'The Northman', 'The Green Knight',
-                'The French Dispatch', 'The Grand Budapest Hotel', 'Moonrise Kingdom',
-                'Fantastic Mr. Fox', 'Isle of Dogs', 'The Darjeeling Limited', 'Rushmore',
-                
-                // Action & Adventure (35 new)
+                'Big Trouble in Little China', 'The Fifth Element', 'Total Recall', 'RoboCop'
+            ];
+            
+            const actionAdventure = [
                 'Die Hard', 'Lethal Weapon', 'Mad Max', 'The Road Warrior', 'Mad Max Beyond Thunderdome',
                 'Raiders of the Lost Ark', 'Indiana Jones and the Temple of Doom', 'Indiana Jones and the Last Crusade',
-                'Indiana Jones and the Kingdom of the Crystal Skull', 'Indiana Jones and the Dial of Destiny',
                 'Mission: Impossible', 'Mission: Impossible II', 'Mission: Impossible III',
-                'Mission: Impossible - Ghost Protocol', 'Mission: Impossible - Rogue Nation',
-                'Mission: Impossible - Fallout', 'Mission: Impossible - Dead Reckoning Part One',
-                'John Wick', 'John Wick: Chapter 2', 'John Wick: Chapter 3 - Parabellum',
-                'John Wick: Chapter 4', 'The Equalizer', 'The Equalizer 2', 'The Equalizer 3',
-                'Taken', 'Taken 2', 'Taken 3', 'The Transporter', 'The Transporter 2',
-                'The Transporter 3', 'Crank', 'Crank: High Voltage', 'Shoot \'Em Up',
-                'Smokin\' Aces', 'The A-Team', 'The Losers', 'Red', 'Red 2',
-                
-                // Comedy & Romance (70 new)
+                'John Wick', 'John Wick: Chapter 2', 'John Wick: Chapter 3 - Parabellum'
+            ];
+            
+            const comedyRomance = [
                 'When Harry Met Sally', 'Sleepless in Seattle', 'You\'ve Got Mail', 'Notting Hill',
                 'Love Actually', 'Bridget Jones\'s Diary', 'The Devil Wears Prada', 'Mamma Mia!',
-                'Chicago', 'Moulin Rouge!', 'The Greatest Showman', 'La La Land', 'The Artist',
-                'The Shape of Water', 'Birdman', 'The Grand Budapest Hotel', 'Moonrise Kingdom',
-                'Fantastic Mr. Fox', 'Isle of Dogs', 'The French Dispatch', 'The Darjeeling Limited',
-                'Rushmore', 'Bottle Rocket', 'The Royal Tenenbaums', 'The Life Aquatic',
-                'The Darjeeling Limited', 'Rushmore', 'Bottle Rocket', 'The Royal Tenenbaums',
-                'The Life Aquatic', 'The Darjeeling Limited', 'Rushmore', 'Bottle Rocket',
-                'The Royal Tenenbaums', 'The Life Aquatic', 'The Darjeeling Limited', 'Rushmore',
-                'Bottle Rocket', 'The Royal Tenenbaums', 'The Life Aquatic', 'The Darjeeling Limited',
-                'Rushmore', 'Bottle Rocket', 'The Royal Tenenbaums', 'The Life Aquatic',
-                'The Darjeeling Limited', 'Rushmore', 'Bottle Rocket', 'The Royal Tenenbaums',
-                'The Life Aquatic', 'The Darjeeling Limited', 'Rushmore', 'Bottle Rocket',
-                'The Royal Tenenbaums', 'The Life Aquatic', 'The Darjeeling Limited', 'Rushmore',
-                
-                // Horror & Thriller (70 new)
+                'Chicago', 'Moulin Rouge!', 'The Greatest Showman', 'La La Land', 'The Artist'
+            ];
+            
+            const horrorThriller = [
                 'The Shining', 'The Exorcist', 'A Nightmare on Elm Street', 'Friday the 13th',
                 'Halloween', 'Scream', 'The Blair Witch Project', 'The Ring', 'The Grudge',
                 'Insidious', 'The Conjuring', 'Annabelle', 'It', 'It Chapter Two',
-                'Get Out', 'Us', 'Nope', 'Midsommar', 'Hereditary', 'The Witch',
-                'The Babadook', 'A Quiet Place', 'A Quiet Place Part II', 'The Invisible Man',
-                'Candyman', 'The Black Phone', 'Smile', 'Barbarian', 'X', 'Pearl',
-                'Nope', 'Midsommar', 'Hereditary', 'The Witch', 'The Babadook',
-                'A Quiet Place', 'A Quiet Place Part II', 'The Invisible Man', 'Candyman',
-                'The Black Phone', 'Smile', 'Barbarian', 'X', 'Pearl', 'Nope',
-                'Midsommar', 'Hereditary', 'The Witch', 'The Babadook', 'A Quiet Place',
-                'A Quiet Place Part II', 'The Invisible Man', 'Candyman', 'The Black Phone',
-                'Smile', 'Barbarian', 'X', 'Pearl', 'Nope', 'Midsommar', 'Hereditary',
-                'The Witch', 'The Babadook', 'A Quiet Place', 'A Quiet Place Part II',
-                'The Invisible Man', 'Candyman', 'The Black Phone', 'Smile', 'Barbarian',
-                'X', 'Pearl', 'Nope', 'Midsommar', 'Hereditary', 'The Witch',
-                'The Babadook', 'A Quiet Place', 'A Quiet Place Part II', 'The Invisible Man',
-                
-                // Animation & Family (70 new)
+                'Get Out', 'Us', 'Nope', 'Midsommar', 'Hereditary', 'The Witch'
+            ];
+            
+            const animationFamily = [
                 'Toy Story', 'Toy Story 2', 'Toy Story 3', 'Toy Story 4', 'Finding Nemo',
                 'Finding Dory', 'Monsters Inc', 'Monsters University', 'Up', 'Inside Out',
-                'Soul', 'Luca', 'Turning Red', 'Lightyear', 'The Incredibles', 'The Incredibles 2',
-                'Coco', 'Moana', 'Frozen', 'Frozen II', 'Tangled', 'Brave', 'Wreck-It Ralph',
-                'Ralph Breaks the Internet', 'Big Hero 6', 'Zootopia', 'Encanto', 'Raya and the Last Dragon',
-                'The Lion King', 'Aladdin', 'Beauty and the Beast', 'The Little Mermaid', 'Mulan',
-                'Pocahontas', 'Hercules', 'Tarzan', 'Lilo & Stitch', 'The Emperor\'s New Groove',
-                'Chicken Run', 'Wallace & Gromit', 'Shaun the Sheep', 'Early Man', 'A Shaun the Sheep Movie',
-                'The Croods', 'How to Train Your Dragon', 'How to Train Your Dragon 2', 'How to Train Your Dragon 3',
-                'Kung Fu Panda', 'Kung Fu Panda 2', 'Kung Fu Panda 3', 'Madagascar', 'Madagascar 2',
-                'Madagascar 3', 'Penguins of Madagascar', 'The Boss Baby', 'The Boss Baby: Family Business',
-                'Trolls', 'Trolls World Tour', 'The Croods: A New Age', 'Spirit Untamed', 'The Bad Guys',
-                'Puss in Boots', 'Puss in Boots: The Last Wish', 'Shrek', 'Shrek 2', 'Shrek the Third',
-                'Shrek Forever After', 'Antz', 'A Bug\'s Life', 'Ratatouille', 'WALL-E', 'Cars',
-                'Cars 2', 'Cars 3', 'Planes', 'Planes: Fire & Rescue', 'Onward', 'The Good Dinosaur'
+                'Soul', 'Luca', 'Turning Red', 'Lightyear', 'The Incredibles', 'The Incredibles 2'
+            ];
+            
+            // Combine all films with proper categories
+            const allFilms = [
+                ...classicFilms.map(film => ({ title: film, category: 'Classic' })),
+                ...modernBlockbusters.map(film => ({ title: film, category: 'Modern Blockbuster' })),
+                ...internationalFilms.map(film => ({ title: film, category: 'International' })),
+                ...cultClassics.map(film => ({ title: film, category: 'Cult Classic' })),
+                ...sciFiFantasy.map(film => ({ title: film, category: 'Sci-Fi & Fantasy' })),
+                ...actionAdventure.map(film => ({ title: film, category: 'Action & Adventure' })),
+                ...comedyRomance.map(film => ({ title: film, category: 'Comedy & Romance' })),
+                ...horrorThriller.map(film => ({ title: film, category: 'Horror & Thriller' })),
+                ...animationFamily.map(film => ({ title: film, category: 'Animation & Family' }))
             ];
             
             // Shuffle and return exactly 50
-            const shuffled = this.shuffleArray([...fallbackFilms]);
+            const shuffled = this.shuffleArray([...allFilms]);
             return shuffled.slice(0, 50).map(film => ({
-                title: film,
+                title: film.title,
                 type: 'Film',
-                category: 'Classic',
+                category: film.category,
                 year: '',
-                source: 'Fallback Database (Expanded x2)'
+                source: 'Fallback Database (Categorized)'
             }));
             
         } catch (error) {
