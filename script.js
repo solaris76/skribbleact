@@ -1268,8 +1268,7 @@ class ActDrawGame {
         if (description) description.innerHTML = `
             <strong>Type:</strong> ${this.currentChallenge.type}<br>
             <strong>Category:</strong> ${this.currentChallenge.category}<br>
-            ${this.currentChallenge.year ? `<strong>Year:</strong> ${this.currentChallenge.year}<br>` : ''}
-            <em>Ready to draw!</em>
+            ${this.currentChallenge.year ? `<strong>Year:</strong> ${this.currentChallenge.year}` : ''}
         `;
         
         if (challengeCard) challengeCard.classList.add('active');
