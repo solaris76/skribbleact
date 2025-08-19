@@ -3,14 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ActDraw - Film & TV Challenge Game</title>
+    <title>SkribbleAct - Film & TV Game</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>🎬 ActDraw</h1>
-        <p>Draw films and TV shows for your team to guess!</p>
-        
+        <header class="header">
+            <h1 class="title">🎬 SkribbleAct 🎨</h1>
+            <p class="subtitle">Film Titles & UK TV Shows</p>
+        </header>
+
         <!-- Loading Indicator -->
         <div id="loadingIndicator" class="loading-container">
             <div class="loading-spinner"></div>
@@ -23,35 +26,49 @@
             </div>
             <div class="loading-status">Initializing...</div>
         </div>
-        
+
         <!-- Game Container (hidden until loaded) -->
         <div id="gameContainer" class="game-container" style="display: none;">
-            <div class="challenge-section">
-                <h2>Current Challenge:</h2>
-                <div id="challengeCard" class="challenge-card">
-                    <div id="challengeTitle" class="challenge-title">Click 'New Challenge' to start!</div>
-                    <div id="challengeInfo" class="challenge-info"></div>
-                </div>
-                <button id="newChallengeBtn" class="btn btn-primary">New Challenge</button>
-            </div>
-            
-            <div class="stats-section">
-                <h3>Challenge Stats:</h3>
-                <div id="challengeStats" class="stats-grid">
-                    <div class="stat-item">
-                        <span class="stat-label">Total Challenges:</span>
-                        <span id="totalChallenges" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Used:</span>
-                        <span id="usedChallenges" class="stat-value">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Remaining:</span>
-                        <span id="remainingChallenges" class="stat-value">0</span>
+            <main class="game-area">
+                <div class="challenge-card" id="challengeCard">
+                    <div class="challenge-content">
+                        <h2 class="challenge-title">Ready to Play?</h2>
+                        <p class="challenge-description">Tap the button below to get a random film or TV show!</p>
                     </div>
                 </div>
-            </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" id="generateBtn">
+                        🎲 Generate Challenge
+                    </button>
+                </div>
+
+                <div class="mode-selection" id="modeSelection" style="display: none;">
+                    <h3>Your Challenge:</h3>
+                    <div class="challenge-mode" id="challengeMode">
+                        <!-- Mode will be randomly selected and displayed here -->
+                    </div>
+                </div>
+
+                <div class="timer-section" id="timerSection" style="display: none;">
+                    <div class="timer-display">
+                        <span class="timer-label">Time Remaining:</span>
+                        <span class="timer" id="timer">60</span>
+                    </div>
+                    <div class="timer-controls">
+                        <button class="btn btn-sound" id="muteBtn">
+                            🔇 Mute
+                        </button>
+                        <button class="btn btn-secondary" id="nextBtn">
+                            Next Challenge
+                        </button>
+                    </div>
+                </div>
+            </main>
+
+            <footer class="footer">
+                <p>Have fun playing SkribbleAct! 🎉</p>
+            </footer>
         </div>
     </div>
     

@@ -1330,17 +1330,21 @@ class ActDrawGame {
     showReadyState() {
         console.log('🎯 Ready to play!');
         
-        // Update stats display
-        const totalChallenges = document.getElementById('totalChallenges');
-        const usedChallenges = document.getElementById('usedChallenges');
-        const remainingChallenges = document.getElementById('remainingChallenges');
+        // Show the challenge card with ready message
+        const challengeCard = document.getElementById('challengeCard');
+        const title = document.querySelector('.challenge-title');
+        const description = document.querySelector('.challenge-description');
         
-        if (totalChallenges) totalChallenges.textContent = this.challenges.length;
-        if (usedChallenges) usedChallenges.textContent = this.usedChallenges.size;
-        if (remainingChallenges) remainingChallenges.textContent = this.challenges.length - this.usedChallenges.size;
+        if (title) title.textContent = '🎬 Fresh Challenges Loaded!';
+        if (description) description.innerHTML = `
+            <strong>Total Challenges:</strong> ${this.challenges.length}<br>
+            <strong>Films:</strong> ${this.challenges.filter(c => c.type === 'Film').length}<br>
+            <strong>TV Shows:</strong> ${this.challenges.filter(c => c.type === 'TV Show').length}<br>
+            <br>
+            <em>Every reload brings 50 completely fresh challenges!</em>
+        `;
         
-        // Show first challenge
-        this.generateChallenge();
+        if (challengeCard) challengeCard.classList.add('active');
         
         console.log(`📊 Challenges loaded: ${this.challenges.length}`);
         console.log(`📊 Films: ${this.challenges.filter(c => c.type === 'Film').length}`);
@@ -1533,11 +1537,27 @@ class ActDrawGame {
     }
 
     bindEvents() {
-        // Bind the new challenge button
-        const newChallengeBtn = document.getElementById('newChallengeBtn');
-        if (newChallengeBtn) {
-            newChallengeBtn.addEventListener('click', () => {
+        // Bind the generate challenge button
+        const generateBtn = document.getElementById('generateBtn');
+        if (generateBtn) {
+            generateBtn.addEventListener('click', () => {
                 this.generateChallenge();
+            });
+        }
+
+        // Bind the next challenge button
+        const nextBtn = document.getElementById('nextBtn');
+        if (nextBtn) {
+            nextBtn.addEventListener('click', () => {
+                this.nextChallenge();
+            });
+        }
+
+        // Bind mute button
+        const muteBtn = document.getElementById('muteBtn');
+        if (muteBtn) {
+            muteBtn.addEventListener('click', () => {
+                this.toggleMute();
             });
         }
     }
