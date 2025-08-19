@@ -247,24 +247,6 @@ class ActDrawGame {
 
     async testAPIConnectivity() {
         console.log('🔍 Testing API connectivity...');
-        this.updateLoadingStatus('Testing API connectivity...', 10);
-        
-        try {
-            // Test TMDB connectivity
-            console.log('🔄 Testing TMDB API...');
-            this.updateLoadingStatus('Testing TMDB API...', 20);
-            const tmdbTest = await fetch('https://api.themoviedb.org/3/configuration?api_key=1b7c076a0e4849aeefd1f3c429c79f3b');
-            if (tmdbTest.ok) {
-                console.log('✅ TMDB API is accessible');
-                this.updateLoadingStatus('TMDB API: ✅ Accessible', 30);
-            } else {
-                console.error('❌ TMDB API is not accessible:', tmdbTest.status, tmdbTest.statusText);
-                this.updateLoadingStatus('TMDB API: ❌ Not accessible', 30);
-            }
-        } catch (error) {
-            console.error('❌ TMDB API connectivity test failed:', error);
-            this.updateLoadingStatus('TMDB API: ❌ Connection failed', 30);
-        }
         
         try {
             // Test OMDB connectivity
@@ -345,9 +327,9 @@ class ActDrawGame {
             if (allChallenges.length < 50) {
                 console.log(`📊 Only got ${allChallenges.length} challenges, fetching more...`);
                 this.updateLoadingStatus('Fetching additional content...', 97);
-                const additionalFilms = await this.fetchMoreFilms();
+                // const additionalFilms = await this.fetchMoreFilms(); // TMDB removed
                 const additionalTV = await this.fetchMoreTVShows();
-                allChallenges = [...allChallenges, ...additionalFilms, ...additionalTV];
+                allChallenges = [...allChallenges, ...additionalTV];
             }
             
             // Remove duplicates and ensure exactly 50 challenges
@@ -401,34 +383,22 @@ class ActDrawGame {
 
     async fetchFilms() {
         console.log('🎬 Fetching popular films from multiple sources...');
-        this.updateLoadingStatus('Fetching films from TMDB...', 90);
+        this.updateLoadingStatus('Fetching films from OMDB...', 90);
         
         try {
-            // Try TMDB first
-            console.log('🔄 Attempting TMDB API...');
-            const tmdbFilms = await this.fetchFilmsFromTMDB();
-            if (tmdbFilms.length > 0) {
-                console.log(`✅ TMDB: ${tmdbFilms.length} films`);
-                this.updateLoadingStatus(`TMDB: ${tmdbFilms.length} films loaded`, 92);
-                return tmdbFilms;
-            } else {
-                console.log('❌ TMDB returned 0 films');
-            }
-
-            // Fallback to OMDB if TMDB fails
-            console.log('🔄 TMDB failed, trying OMDB...');
-            this.updateLoadingStatus('TMDB failed, trying OMDB...', 93);
+            // Try OMDB first (more reliable)
+            console.log('🔄 Attempting OMDB API...');
             const omdbFilms = await this.fetchFilmsFromOMDB();
             if (omdbFilms.length > 0) {
                 console.log(`✅ OMDB: ${omdbFilms.length} films`);
-                this.updateLoadingStatus(`OMDB: ${omdbFilms.length} films loaded`, 94);
+                this.updateLoadingStatus(`OMDB: ${omdbFilms.length} films loaded`, 92);
                 return omdbFilms;
             } else {
                 console.log('❌ OMDB returned 0 films');
             }
 
-            // Final fallback to our database
-            console.log('🔄 All APIs failed, using fallback database...');
+            // Fallback to our database if OMDB fails
+            console.log('🔄 OMDB failed, using fallback database...');
             this.updateLoadingStatus('Using fallback film database...', 95);
             return await this.fetchFallbackFilms();
 
@@ -437,81 +407,6 @@ class ActDrawGame {
             console.log('🔄 Using fallback due to error...');
             this.updateLoadingStatus('Error fetching films, using fallback...', 95);
             return await this.fetchFallbackFilms();
-        }
-    }
-
-    async fetchFilmsFromTMDB() {
-        try {
-            // Find an unused page from 1-100 (much larger range to avoid repeats)
-            let randomPage = this.getUnusedFilmPage(1, 100);
-            if (randomPage === null) {
-                // If all pages 1-100 are used, expand to 101-200
-                randomPage = this.getUnusedFilmPage(101, 200);
-                if (randomPage === null) {
-                    // If even 101-200 are used, expand to 201-300
-                    randomPage = this.getUnusedFilmPage(201, 300);
-                    if (randomPage === null) {
-                        // If all are used, reset and start over
-                        this.usedFilmPages.clear();
-                        randomPage = this.getUnusedFilmPage(1, 100);
-                    }
-                }
-            }
-            
-            // Add timestamp-based randomization to sorting
-            const timestamp = Date.now();
-            const sortOptions = ['popularity.desc', 'vote_average.desc', 'revenue.desc', 'release_date.desc', 'vote_count.desc'];
-            const randomSort = sortOptions[timestamp % sortOptions.length];
-            
-            // Add random year filtering to get different decades
-            const currentYear = new Date().getFullYear();
-            const randomDecade = Math.floor(Math.random() * 10) * 10; // 0, 10, 20, 30, 40, 50, 60, 70, 80, 90
-            const randomYear = currentYear - randomDecade - Math.floor(Math.random() * 10);
-            
-            console.log(`📄 Using TMDB page ${randomPage} with sort: ${randomSort}, year around ${randomYear} (unused page)`);
-            
-            const apiUrl = `https://api.themoviedb.org/3/discover/movie?api_key=1b7c076a0e4849aeefd1f3c429c79f3b&language=en-US&page=${randomPage}&sort_by=${randomSort}&include_adult=false&include_video=false&vote_count.gte=50&vote_average.gte=5.5&year=${randomYear}`;
-            console.log(`🔗 TMDB API URL: ${apiUrl}`);
-            
-            const tmdbResponse = await fetch(apiUrl);
-            
-            console.log(`📊 TMDB Response Status: ${tmdbResponse.status} ${tmdbResponse.statusText}`);
-            
-            if (!tmdbResponse.ok) {
-                console.error(`❌ TMDB API error: ${tmdbResponse.status} ${tmdbResponse.statusText}`);
-                const errorText = await tmdbResponse.text();
-                console.error(`❌ TMDB Error Details: ${errorText}`);
-                throw new Error(`TMDB API error: ${tmdbResponse.status} ${tmdbResponse.statusText}`);
-            }
-            
-            const data = await tmdbResponse.json();
-            console.log(`📊 TMDB Raw Response:`, data);
-            
-            if (!data.results || !Array.isArray(data.results)) {
-                console.error('❌ TMDB API returned invalid data structure:', data);
-                throw new Error('TMDB API returned invalid data structure');
-            }
-            
-            console.log(`📊 TMDB Results Count: ${data.results.length}`);
-            
-            // Mark this page as used
-            this.usedFilmPages.add(randomPage);
-            
-            const films = data.results.map(movie => ({
-                title: movie.title,
-                type: 'Film',
-                category: 'Popular',
-                year: movie.release_date?.split('-')[0] || '',
-                source: `TMDB Page ${randomPage} (${randomSort}, ${randomYear})`
-            }));
-            
-            console.log(`✅ TMDB Success: ${films.length} films processed`);
-            return films;
-            
-        } catch (error) {
-            console.error('❌ TMDB fetch failed:', error);
-            console.error('❌ TMDB Error Stack:', error.stack);
-            return [];
         }
     }
 
@@ -662,88 +557,6 @@ class ActDrawGame {
         }
     }
 
-    async fetchMoreFilms() {
-        try {
-            console.log('🎬 Fetching more films from TMDB...');
-            
-            // Find an unused page from 101-200 (avoid repeats)
-            let randomPage = this.getUnusedFilmPage(101, 200);
-            if (randomPage === null) {
-                // If all pages 101-200 are used, expand to 201-300
-                randomPage = this.getUnusedFilmPage(201, 300);
-                if (randomPage === null) {
-                    // If even 201-300 are used, expand to 301-400
-                    randomPage = this.getUnusedFilmPage(301, 400);
-                    if (randomPage === null) {
-                        // If all are used, reset and start over
-                        this.usedFilmPages.clear();
-                        randomPage = this.getUnusedFilmPage(101, 200);
-                    }
-                }
-            }
-            
-            // Find an unused genre to get variety
-            const genres = [28, 12, 16, 35, 80, 99, 18, 10751, 14, 36, 27, 10402, 9648, 10749, 878, 10770, 53, 10752, 37];
-            let randomGenre = this.getUnusedGenre(genres);
-            if (randomGenre === null) {
-                // If all genres are used, reset and start over
-                this.usedFilmGenres.clear();
-                randomGenre = this.getUnusedGenre(genres);
-            }
-            
-            // Add random year filtering
-            const currentYear = new Date().getFullYear();
-            const randomYear = currentYear - Math.floor(Math.random() * 50);
-            
-            console.log(`📄 Using TMDB page ${randomPage} with genre ${randomGenre}, year around ${randomYear} (unused page & genre)`);
-            
-            const response = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=1b7c076a0e4849aeefd1f3c429c79f3b&language=en-US&page=${randomPage}&sort_by=vote_average.desc&include_adult=false&include_video=false&with_genres=${randomGenre}&vote_count.gte=30&vote_average.gte=5.0&year=${randomYear}`);
-            
-            if (!response.ok) {
-                throw new Error(`TMDB Top Rated API error: ${response.status} ${response.statusText}`);
-            }
-            
-            const data = await response.json();
-            
-            if (!data.results || !Array.isArray(data.results)) {
-                throw new Error('TMDB Top Rated API returned invalid data structure');
-            }
-            
-            // Mark this page and genre as used
-            this.usedFilmPages.add(randomPage);
-            this.usedFilmGenres.add(randomGenre);
-            
-            const films = data.results.map(movie => ({
-                title: movie.title,
-                type: 'Film',
-                category: 'Top Rated',
-                year: movie.release_date?.split('-')[0] || '',
-                source: `TMDB Page ${randomPage} Genre ${randomGenre} Year ${randomYear}`
-            }));
-            
-            return films;
-            
-        } catch (error) {
-            console.error('❌ Error fetching more films from TMDB:', error);
-            return [];
-        }
-    }
-
-    getUnusedFilmPage(min, max) {
-        const availablePages = [];
-        for (let i = min; i <= max; i++) {
-            if (!this.usedFilmPages.has(i)) {
-                availablePages.push(i);
-            }
-        }
-        return availablePages.length > 0 ? availablePages[Math.floor(Math.random() * availablePages.length)] : null;
-    }
-
-    getUnusedGenre(genres) {
-        const availableGenres = genres.filter(genre => !this.usedFilmGenres.has(genre));
-        return availableGenres.length > 0 ? availableGenres[Math.floor(Math.random() * availableGenres.length)] : null;
-    }
-
     async fetchUKTVShows() {
         console.log('📺 Fetching UK TV shows from multiple sources...');
         this.updateLoadingStatus('Fetching UK TV shows from TV Maze...', 95);
@@ -799,12 +612,12 @@ class ActDrawGame {
             if (Array.isArray(data)) {
                 // Handle schedule or shows endpoint
                 ukShows = data
-                .filter(show => show.show && show.show.name)
+                    .filter(show => show.show && show.show.name)
                     .slice(0, 20) // Keep first 20 for variety
-                .map(show => ({
-                    title: show.show.name,
-                    type: 'TV Show',
-                    category: 'UK Current',
+                    .map(show => ({
+                        title: show.show.name,
+                        type: 'TV Show',
+                        category: 'UK Current',
                         network: show.show.network?.name || 'BBC',
                         source: 'TV Maze Schedule/Shows'
                     }));
@@ -886,8 +699,7 @@ class ActDrawGame {
                 'Big Brother: The Final', 'Celebrity Big Brother: The Final',
                 
                 // BBC Factual (30 new)
-                'Planet Earth', 'Blue Planet', 'Frozen Planet', 'Life', 'Human Planet',
-               
+                'Planet Earth', 'Blue Planet', 'Frozen Planet', 'Life', 'Human Planet'
             ];
             
             // Shuffle and return exactly 50
@@ -906,60 +718,26 @@ class ActDrawGame {
         }
     }
 
-    async fetchFallbackUKTVShows() {
-        try {
-            console.log('🔄 Using fallback UK TV shows...');
-            const fallbackUKShows = [
-                'Doctor Who', 'EastEnders', 'Coronation Street', 'Emmerdale',
-                'The Great British Bake Off', 'Top Gear', 'Strictly Come Dancing',
-                'Britain\'s Got Talent', 'The X Factor', 'Match of the Day',
-                'Antiques Roadshow', 'Gardeners\' World', 'Countryfile',
-                'The One Show', 'This Morning', 'Loose Women', 'Good Morning Britain',
-                'BBC News', 'ITV News', 'Channel 4 News', 'Sky News'
-            ];
-            
-            // Shuffle the fallback list
-            const shuffledShows = this.shuffleArray([...fallbackUKShows]);
-            
-            const shows = shuffledShows.map(title => ({
-                title: title,
-                type: 'TV Show',
-                category: 'UK Classic',
-                network: 'Various',
-                source: 'Fallback UK Shows (Shuffled)'
-            }));
-            
-            console.log(`✅ Fallback fetched ${shows.length} UK TV shows`);
-            return shows;
-        } catch (error) {
-            console.error('❌ Fallback UK TV shows failed:', error);
-            return [];
+    getUnusedTVPage(min, max) {
+        const availablePages = [];
+        for (let i = min; i <= max; i++) {
+            if (!this.usedTVPages.has(i)) {
+                availablePages.push(i);
+            }
         }
+        return availablePages.length > 0 ? availablePages[Math.floor(Math.random() * availablePages.length)] : null;
+    }
+
+    getUnusedTVSearchTerm(searchTerms) {
+        const availableTerms = searchTerms.filter(term => !this.usedTVSearchTerms.has(term));
+        if (availableTerms.length === 0) {
+            this.usedTVSearchTerms.clear(); // Reset if all used
+            return searchTerms[0];
+        }
+        return availableTerms[Math.floor(Math.random() * availableTerms.length)];
     }
 
     async fetchMoreTVShows() {
-        try {
-            console.log('📺 Fetching more TV shows from multiple sources...');
-            
-            // Try TV Maze first
-            const tvMazeShows = await this.fetchMoreTVShowsFromTVMaze();
-            if (tvMazeShows.length > 0) {
-                console.log(`✅ TV Maze: ${tvMazeShows.length} shows`);
-                return tvMazeShows;
-            }
-
-            // Fallback to streaming platforms
-            console.log('🔄 TV Maze failed, using streaming platforms...');
-            return await this.fetchTVShowsFromStreaming();
-
-        } catch (error) {
-            console.error('❌ Error fetching more TV shows:', error);
-            console.log('🔄 Using streaming fallback due to error...');
-            return await this.fetchTVShowsFromStreaming();
-        }
-    }
-
-    async fetchMoreTVShowsFromTVMaze() {
         try {
             // Use random page and different search terms to get variety
             const randomPage = this.getUnusedTVPage(51, 150); // Much larger range
