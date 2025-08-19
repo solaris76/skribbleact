@@ -170,6 +170,34 @@ body {
     text-align: center;
 }
 
+.challenge-actions {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.btn-start {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);
+}
+
+.btn-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.6);
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+}
+
+.btn-start:active {
+    transform: translateY(0);
+}
+
 /* Mode-specific styling */
 .challenge-instruction[data-mode="describe"] .challenge-emoji {
     color: #059669;

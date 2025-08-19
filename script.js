@@ -1219,7 +1219,20 @@ class ActDrawGame {
                 <div class="challenge-description">
                     <p>${description}</p>
                 </div>
+                <div class="challenge-actions">
+                    <button class="btn btn-start" id="startBtn">
+                        🚀 Start Challenge
+                    </button>
+                </div>
             `;
+            
+            // Bind the start button
+            const startBtn = document.getElementById('startBtn');
+            if (startBtn) {
+                startBtn.addEventListener('click', () => {
+                    this.startChallenge(randomMode);
+                });
+            }
         }
         
         // Show the mode selection
@@ -1229,6 +1242,31 @@ class ActDrawGame {
         }
         
         console.log(`🎯 Random challenge mode: ${randomMode}`);
+    }
+
+    startChallenge(mode) {
+        console.log(`🚀 Starting challenge in ${mode} mode`);
+        
+        // Hide mode selection
+        this.hideModeSelection();
+        
+        // Start timer
+        this.startTimer();
+        
+        // Show timer section
+        this.showTimerSection();
+        
+        // Show appropriate message based on mode
+        let modeText = '';
+        if (mode === 'Draw It!') {
+            modeText = 'Drawing';
+        } else if (mode === 'Act It!') {
+            modeText = 'Acting';
+        } else if (mode === 'Describe It!') {
+            modeText = 'Describing';
+        }
+        
+        this.showMessage(`🎯 ${modeText} mode activated! Good luck!`, 'game');
     }
 
     showReadyState() {
