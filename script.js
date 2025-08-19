@@ -609,6 +609,7 @@ class ActDrawGame {
                 'Groundhog Day', 'Groundhog Day', 'Groundhog Day', 'Groundhog Day', 'Groundhog Day',
                 'Groundhog Day', 'Groundhog Day', 'Groundhog Day', 'Groundhog Day', 'Groundhog Day',
                 'Groundhog Day', 'Groundhog Day', 'Groundhog Day', 'Groundhog Day', 'Groundhog Day',
+                'Groundhog Day', 'Groundhog Day', 'Groundhog Day', 'Groundhog Day', 'Groundhog Day',
                 'Groundhog Day', 'Groundhog Day', 'Groundhog Day', 'Groundhog Day', 'Groundhog Day'
             ];
             
@@ -1191,8 +1192,8 @@ class ActDrawGame {
     }
 
     showRandomChallengeMode() {
-        // Randomly choose between "Draw It!", "Act It!", and "Describe It!" for variety
-        const challengeModes = ['Draw It!', 'Act It!', 'Describe It!'];
+        // Randomly choose between "Draw It!", "Act It!", "Describe It!", and "Sing It!" for variety
+        const challengeModes = ['Draw It!', 'Act It!', 'Describe It!', 'Sing It!'];
         const randomMode = challengeModes[Math.floor(Math.random() * challengeModes.length)];
         
         // Update the challenge mode display
@@ -1209,6 +1210,9 @@ class ActDrawGame {
             } else if (randomMode === 'Describe It!') {
                 emoji = '📝';
                 description = 'Describe the plot without mentioning the title, characters, or actors!';
+            } else if (randomMode === 'Sing It!') {
+                emoji = '🎵';
+                description = 'Hum or sing the theme music without any lyrics - just melody and rhythm!';
             }
             
             challengeMode.innerHTML = `
@@ -1264,6 +1268,8 @@ class ActDrawGame {
             modeText = 'Acting';
         } else if (mode === 'Describe It!') {
             modeText = 'Describing';
+        } else if (mode === 'Sing It!') {
+            modeText = 'Singing';
         }
         
         this.showMessage(`🎯 ${modeText} mode activated! Good luck!`, 'game');
