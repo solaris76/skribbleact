@@ -179,141 +179,174 @@ class ActDrawGame {
     }
 
     async initializeGame() {
+        console.log('🎬 ActDrawGame - Loading fresh challenges...');
         await this.loadChallenges();
         this.loadUsedChallenges();
+        this.showReadyState();
     }
 
     async loadChallenges() {
+        console.log('📡 Loading 50 fresh challenges from APIs...');
         try {
-            // Try to load from localStorage first
-            const saved = localStorage.getItem('skribbleact_challenges');
-            if (saved) {
-                this.challenges = JSON.parse(saved);
-                console.log(`Loaded ${this.challenges.length} challenges from cache`);
-            }
-
-            // If we don't have enough challenges, fetch more
-            if (this.challenges.length < 50) {
-                await this.fetchNewChallenges();
-            }
-        } catch (error) {
-            console.error('Error loading challenges:', error);
-            await this.fetchNewChallenges();
-        }
-    }
-
-    async fetchNewChallenges() {
-        try {
-            const newChallenges = [];
+            // Clear any existing challenges
+            this.challenges = [];
             
-            // Fetch films from TMDB API (popular films)
+            // Fetch fresh films and TV shows
             const films = await this.fetchFilms();
-            newChallenges.push(...films);
-            
-            // Fetch UK TV shows from TV Maze API
             const tvShows = await this.fetchUKTVShows();
-            newChallenges.push(...tvShows);
             
-            // Add some classic UK TV shows manually
-            const classicUKShows = [
-                'Doctor Who', 'EastEnders', 'Coronation Street', 'Emmerdale',
-                'The Great British Bake Off', 'Top Gear', 'Strictly Come Dancing',
-                'Britain\'s Got Talent', 'The X Factor', 'Match of the Day',
-                'Antiques Roadshow', 'Gardeners\' World', 'Countryfile',
-                'The One Show', 'This Morning', 'Loose Women', 'Good Morning Britain',
-                'BBC News', 'ITV News', 'Channel 4 News'
-            ];
+            // Combine and ensure exactly 50 challenges
+            let allChallenges = [...films, ...tvShows];
             
-            classicUKShows.forEach(show => {
-                newChallenges.push({
-                    title: show,
-                    type: 'TV Show',
-                    category: 'UK Classic'
-                });
-            });
-
-            // Add some classic films manually
-            const classicFilms = [
-                'The Godfather', 'Pulp Fiction', 'The Shawshank Redemption',
-                'Forrest Gump', 'The Matrix', 'Titanic', 'Avatar',
-                'Star Wars: A New Hope', 'The Lord of the Rings',
-                'Harry Potter and the Philosopher\'s Stone', 'Jurassic Park',
-                'Back to the Future', 'E.T. the Extra-Terrestrial',
-                'Jaws', 'The Exorcist', 'Rocky', 'Die Hard',
-                'Indiana Jones and the Raiders of the Lost Ark',
-                'Ghostbusters', 'The Terminator'
-            ];
-
-            classicFilms.forEach(film => {
-                newChallenges.push({
-                    title: film,
-                    type: 'Film',
-                    category: 'Classic'
-                });
-            });
-
-            // Merge with existing challenges and remove duplicates
-            const allChallenges = [...this.challenges, ...newChallenges];
-            const uniqueChallenges = this.removeDuplicates(allChallenges);
+            // If we don't have enough, fetch more from different sources
+            if (allChallenges.length < 50) {
+                console.log(`📊 Only got ${allChallenges.length} challenges, fetching more...`);
+                const additionalFilms = await this.fetchMoreFilms();
+                const additionalTV = await this.fetchMoreTVShows();
+                allChallenges = [...allChallenges, ...additionalFilms, ...additionalTV];
+            }
             
-            this.challenges = uniqueChallenges;
+            // Remove duplicates and ensure exactly 50
+            this.challenges = this.ensureExactly50Challenges(allChallenges);
             
-            // Save to localStorage
-            localStorage.setItem('skribbleact_challenges', JSON.stringify(this.challenges));
-            console.log(`Total challenges available: ${this.challenges.length}`);
+            console.log(`✅ Loaded ${this.challenges.length} fresh challenges`);
+            console.log('🎬 Films:', this.challenges.filter(c => c.type === 'Film').length);
+            console.log('📺 TV Shows:', this.challenges.filter(c => c.type === 'TV Show').length);
             
         } catch (error) {
-            console.error('Error fetching challenges:', error);
-            // Fallback to basic challenges if API fails
-            this.challenges = this.getFallbackChallenges();
+            console.error('❌ Error loading challenges:', error);
+            this.challenges = [];
         }
     }
 
     async fetchFilms() {
         try {
-            // Using a free film API (OMDB alternative)
+            console.log('🎬 Fetching popular films from TMDB...');
             const response = await fetch('https://api.themoviedb.org/3/movie/popular?api_key=1b7c076a0e4849aeefd1f3c429c79f3b&language=en-US&page=1');
             const data = await response.json();
             
-            return data.results.slice(0, 20).map(movie => ({
+            const films = data.results.slice(0, 25).map(movie => ({
                 title: movie.title,
                 type: 'Film',
                 category: 'Popular',
-                year: movie.release_date?.split('-')[0] || ''
+                year: movie.release_date?.split('-')[0] || '',
+                source: 'TMDB Popular'
             }));
+            
+            console.log(`✅ Fetched ${films.length} popular films`);
+            return films;
         } catch (error) {
-            console.error('Error fetching films:', error);
+            console.error('❌ Error fetching films:', error);
+            return [];
+        }
+    }
+
+    async fetchMoreFilms() {
+        try {
+            console.log('🎬 Fetching more films from TMDB...');
+            const response = await fetch('https://api.themoviedb.org/3/movie/top_rated?api_key=1b7c076a0e4849aeefd1f3c429c79f3b&language=en-US&page=1');
+            const data = await response.json();
+            
+            const films = data.results.slice(0, 15).map(movie => ({
+                title: movie.title,
+                type: 'Film',
+                category: 'Top Rated',
+                year: movie.release_date?.split('-')[0] || '',
+                source: 'TMDB Top Rated'
+            }));
+            
+            console.log(`✅ Fetched ${films.length} top rated films`);
+            return films;
+        } catch (error) {
+            console.error('❌ Error fetching more films:', error);
             return [];
         }
     }
 
     async fetchUKTVShows() {
         try {
-            // Using TV Maze API for UK shows
+            console.log('📺 Fetching UK TV shows from TV Maze...');
             const response = await fetch('https://api.tvmaze.com/schedule?country=GB&date=' + new Date().toISOString().split('T')[0]);
             const data = await response.json();
             
             const ukShows = data
                 .filter(show => show.show && show.show.name)
-                .slice(0, 15)
+                .slice(0, 20)
                 .map(show => ({
                     title: show.show.name,
                     type: 'TV Show',
                     category: 'UK Current',
-                    network: show.show.network?.name || 'BBC'
+                    network: show.show.network?.name || 'BBC',
+                    source: 'TV Maze Schedule'
                 }));
             
+            console.log(`✅ Fetched ${ukShows.length} UK TV shows`);
             return ukShows;
         } catch (error) {
-            console.error('Error fetching UK TV shows:', error);
+            console.error('❌ Error fetching UK TV shows:', error);
             return [];
         }
+    }
+
+    async fetchMoreTVShows() {
+        try {
+            console.log('📺 Fetching more TV shows from TV Maze...');
+            const response = await fetch('https://api.tvmaze.com/shows?page=1');
+            const data = await response.json();
+            
+            const tvShows = data
+                .filter(show => show.name && show.language === 'English')
+                .slice(0, 15)
+                .map(show => ({
+                    title: show.name,
+                    type: 'TV Show',
+                    category: 'International',
+                    network: show.network?.name || 'Various',
+                    source: 'TV Maze Shows'
+                }));
+            
+            console.log(`✅ Fetched ${tvShows.length} additional TV shows`);
+            return tvShows;
+        } catch (error) {
+            console.error('❌ Error fetching more TV shows:', error);
+            return [];
+        }
+    }
+
+    ensureExactly50Challenges(allChallenges) {
+        // Remove duplicates first
+        const uniqueChallenges = this.removeDuplicates(allChallenges);
+        
+        // If we have exactly 50, return them
+        if (uniqueChallenges.length === 50) {
+            return uniqueChallenges;
+        }
+        
+        // If we have more than 50, randomly select 50
+        if (uniqueChallenges.length > 50) {
+            const shuffled = this.shuffleArray([...uniqueChallenges]);
+            return shuffled.slice(0, 50);
+        }
+        
+        // If we have less than 50, we'll return what we have
+        // (this shouldn't happen with our API calls, but just in case)
+        console.warn(`⚠️ Only got ${uniqueChallenges.length} challenges, less than 50`);
+        return uniqueChallenges;
+    }
+
+    shuffleArray(array) {
+        const shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
     }
 
     removeDuplicates(challenges) {
         const seen = new Set();
         return challenges.filter(challenge => {
-            const key = challenge.title.toLowerCase();
+            const key = challenge.title.toLowerCase().trim();
             if (seen.has(key)) {
                 return false;
             }
@@ -322,38 +355,17 @@ class ActDrawGame {
         });
     }
 
-    getFallbackChallenges() {
-        return [
-            { title: 'The Office', type: 'TV Show', category: 'UK/US' },
-            { title: 'Friends', type: 'TV Show', category: 'US' },
-            { title: 'Breaking Bad', type: 'TV Show', category: 'US' },
-            { title: 'Game of Thrones', type: 'TV Show', category: 'US' },
-            { title: 'The Crown', type: 'TV Show', category: 'UK' },
-            { title: 'Peaky Blinders', type: 'TV Show', category: 'UK' },
-            { title: 'Downton Abbey', type: 'TV Show', category: 'UK' },
-            { title: 'Sherlock', type: 'TV Show', category: 'UK' },
-            { title: 'Black Mirror', type: 'TV Show', category: 'UK' },
-            { title: 'The Inbetweeners', type: 'TV Show', category: 'UK' },
-            { title: 'Inception', type: 'Film', category: 'Sci-Fi' },
-            { title: 'The Dark Knight', type: 'Film', category: 'Action' },
-            { title: 'Interstellar', type: 'Film', category: 'Sci-Fi' },
-            { title: 'La La Land', type: 'Film', category: 'Musical' },
-            { title: 'Parasite', type: 'Film', category: 'Thriller' }
-        ];
-    }
-
     loadUsedChallenges() {
-        const saved = localStorage.getItem('skribbleact_used');
-        if (saved) {
-            this.usedChallenges = new Set(JSON.parse(saved));
-        }
-    }
-
-    saveUsedChallenges() {
-        localStorage.setItem('skribbleact_used', JSON.stringify([...this.usedChallenges]));
+        // Always start with a clean slate - no previously used challenges
+        this.usedChallenges = new Set();
+        console.log('🔄 Starting with fresh challenge list - no previously used challenges');
     }
 
     generateChallenge() {
+        console.log('🎲 Generating new challenge...');
+        console.log(`📊 Available challenges: ${this.challenges.length}`);
+        console.log(`🔄 Used challenges: ${this.usedChallenges.size}`);
+        
         if (this.challenges.length === 0) {
             this.showMessage('No challenges available. Please refresh the page.', 'error');
             return;
@@ -364,12 +376,17 @@ class ActDrawGame {
             challenge => !this.usedChallenges.has(challenge.title)
         );
 
+        console.log(`🎯 Available challenges (not used): ${availableChallenges.length}`);
+
         if (availableChallenges.length === 0) {
-            // If all challenges have been used, reset the used list
+            // If all challenges have been used, reload fresh challenges
+            console.log('🔄 All challenges used up! Reloading fresh challenges...');
             this.usedChallenges.clear();
-            this.saveUsedChallenges();
-            this.showMessage('All challenges completed! Starting fresh! 🎉', 'success');
-            return this.generateChallenge();
+            this.loadChallenges().then(() => {
+                this.showMessage('🔄 Fresh challenges loaded! Starting over! 🎉', 'success');
+                this.generateChallenge();
+            });
+            return;
         }
 
         // Randomly select a challenge
@@ -378,7 +395,9 @@ class ActDrawGame {
         
         // Mark as used
         this.usedChallenges.add(this.currentChallenge.title);
-        this.saveUsedChallenges();
+        
+        console.log(`✅ Selected challenge: "${this.currentChallenge.title}" (${this.currentChallenge.type})`);
+        console.log(`📊 Remaining challenges: ${availableChallenges.length - 1}`);
 
         this.displayChallenge();
         this.showModeSelection();
@@ -395,8 +414,27 @@ class ActDrawGame {
             <strong>Category:</strong> ${this.currentChallenge.category}
             ${this.currentChallenge.year ? `<br><strong>Year:</strong> ${this.currentChallenge.year}` : ''}
             ${this.currentChallenge.network ? `<br><strong>Network:</strong> ${this.currentChallenge.network}` : ''}
+            <br><strong>Source:</strong> ${this.currentChallenge.source || 'API'}
         `;
 
+        challengeCard.classList.add('active');
+    }
+
+    showReadyState() {
+        console.log('🎉 App ready! Fresh challenges loaded.');
+        const challengeCard = document.getElementById('challengeCard');
+        const title = document.querySelector('.challenge-title');
+        const description = document.querySelector('.challenge-description');
+        
+        title.textContent = '🎬 Fresh Challenges Loaded!';
+        description.innerHTML = `
+            <strong>Total Challenges:</strong> ${this.challenges.length}<br>
+            <strong>Films:</strong> ${this.challenges.filter(c => c.type === 'Film').length}<br>
+            <strong>TV Shows:</strong> ${this.challenges.filter(c => c.type === 'TV Show').length}<br>
+            <br>
+            <em>Every reload brings 50 completely fresh challenges!</em>
+        `;
+        
         challengeCard.classList.add('active');
     }
 
