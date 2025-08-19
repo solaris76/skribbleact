@@ -1241,21 +1241,43 @@ class ActDrawGame {
         console.log(`📊 New challenges loaded: ${this.challenges.length}`);
     }
 
+    updateStats() {
+        // Update challenge statistics
+        const totalChallenges = document.getElementById('totalChallenges');
+        const usedChallenges = document.getElementById('usedChallenges');
+        const remainingChallenges = document.getElementById('remainingChallenges');
+        
+        if (totalChallenges) totalChallenges.textContent = this.challenges.length;
+        if (usedChallenges) usedChallenges.textContent = this.usedChallenges.size;
+        if (remainingChallenges) remainingChallenges.textContent = this.challenges.length - this.usedChallenges.size;
+    }
+
     displayChallenge() {
+        if (!this.currentChallenge) {
+            console.log('❌ No challenge to display');
+            return;
+        }
+
+        console.log(`🎯 Displaying challenge: ${this.currentChallenge.title}`);
+        
         const challengeCard = document.getElementById('challengeCard');
         const title = document.querySelector('.challenge-title');
         const description = document.querySelector('.challenge-description');
-
-        title.textContent = this.currentChallenge.title;
-        description.innerHTML = `
+        
+        if (title) title.textContent = this.currentChallenge.title;
+        if (description) description.innerHTML = `
             <strong>Type:</strong> ${this.currentChallenge.type}<br>
-            <strong>Category:</strong> ${this.currentChallenge.category}
-            ${this.currentChallenge.year ? `<br><strong>Year:</strong> ${this.currentChallenge.year}` : ''}
-            ${this.currentChallenge.network ? `<br><strong>Network:</strong> ${this.currentChallenge.network}` : ''}
-            <br><strong>Source:</strong> ${this.currentChallenge.source || 'API'}
+            <strong>Category:</strong> ${this.currentChallenge.category}<br>
+            ${this.currentChallenge.year ? `<strong>Year:</strong> ${this.currentChallenge.year}<br>` : ''}
+            <em>Ready to draw!</em>
         `;
-
-        challengeCard.classList.add('active');
+        
+        if (challengeCard) challengeCard.classList.add('active');
+        
+        // Update stats
+        this.updateStats();
+        
+        console.log(`✅ Challenge displayed: ${this.currentChallenge.title} (${this.currentChallenge.type} - ${this.currentChallenge.category})`);
     }
 
     showReadyState() {
