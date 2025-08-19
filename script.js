@@ -1438,6 +1438,11 @@ class ActDrawGame {
     // Add voice announcement function
     announceChallengeType(challenge) {
         try {
+            // Debug: Log the entire challenge object
+            console.log('🔍 Challenge object for voice announcement:', challenge);
+            console.log('🔍 Challenge type:', challenge?.type);
+            console.log('🔍 Challenge title:', challenge?.title);
+            
             // Check if muted
             if (this.isMuted) {
                 console.log('🔇 Voice announcement skipped - muted');
@@ -1451,12 +1456,18 @@ class ActDrawGame {
                 
                 // Create the announcement text based on challenge type
                 let announcement = '';
-                if (challenge.type === 'Film' || challenge.type === 'TV Show') {
-                    // Randomly choose between "Draw It!" and "Act It!" for variety
-                    const announcements = ['Draw It!', 'Act It!', 'Draw It!', 'Act It!'];
-                    announcement = announcements[Math.floor(Math.random() * announcements.length)];
+                const challengeType = challenge?.type || challenge?.Type || 'Unknown';
+                console.log('🔍 Challenge type for voice:', challengeType);
+                
+                if (challengeType === 'Film' || challengeType === 'film') {
+                    announcement = 'Act It!';
+                    console.log('🎬 Film detected - announcing "Act It!"');
+                } else if (challengeType === 'TV Show' || challengeType === 'TV' || challengeType === 'tv') {
+                    announcement = 'Act It!';
+                    console.log('📺 TV Show detected - announcing "Act It!"');
                 } else {
                     announcement = 'Draw It!';
+                    console.log('❓ Unknown type - announcing "Draw It!"');
                 }
                 
                 // Create speech synthesis utterance
@@ -1467,25 +1478,28 @@ class ActDrawGame {
                 utterance.rate = 1.2;   // Slightly faster for excitement
                 utterance.pitch = 1.3;  // Higher pitch for enthusiasm
                 
-                // Try to find a good voice (prefer female voices for excitement)
+                // Try to find a good male voice
                 const voices = speechSynthesis.getVoices();
                 if (voices.length > 0) {
-                    // Look for female voices first, then any available voice
+                    // Look for male voices first, then any available voice
                     const preferredVoice = voices.find(voice => 
-                        voice.name.includes('Female') || 
-                        voice.name.includes('Samantha') || 
-                        voice.name.includes('Victoria') ||
-                        voice.name.includes('Alex') ||
-                        voice.name.includes('Karen')
+                        voice.name.includes('Male') || 
+                        voice.name.includes('Daniel') || 
+                        voice.name.includes('Tom') ||
+                        voice.name.includes('Fred') ||
+                        voice.name.includes('Ralph') ||
+                        voice.name.includes('Google UK English Male') ||
+                        voice.name.includes('Google US English Male')
                     ) || voices[0];
                     
                     utterance.voice = preferredVoice;
+                    console.log('🎤 Selected voice:', preferredVoice?.name);
                 }
                 
                 // Speak the announcement
                 speechSynthesis.speak(utterance);
                 
-                console.log(`🎤 Voice Announcement: "${announcement}" for ${challenge.type}: ${challenge.title}`);
+                console.log(`🎤 Voice Announcement: "${announcement}" for ${challenge?.type}: ${challenge?.title}`);
             }
         } catch (error) {
             console.error('❌ Voice announcement failed:', error);
