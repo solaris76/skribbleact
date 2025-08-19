@@ -158,7 +158,6 @@ body {
     padding: 15px;
     background: rgba(255, 255, 255, 0.9);
     border-radius: 8px;
-    border-left: 4px solid #fbbf24;
 }
 
 .challenge-description p {
@@ -268,7 +267,6 @@ body {
     padding: 25px;
     background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
     border-radius: 15px;
-    border: 2px solid #fbbf24;
 }
 
 .mode-selection h3 {
@@ -284,7 +282,6 @@ body {
     padding: 20px;
     background: white;
     border-radius: 10px;
-    border: 2px solid #fbbf24;
     box-shadow: 0 4px 15px rgba(251, 191, 36, 0.3);
 }
 
