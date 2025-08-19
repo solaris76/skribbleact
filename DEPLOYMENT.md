@@ -79,7 +79,7 @@ vercel --prod
 
 ✅ **1,080+ Challenges** - Massive film & TV database  
 ✅ **Anti-Repeat System** - Fresh content every reload  
-✅ **Random Mode Selection** - "Draw It!" or "Act It!"  
+✅ **Random Mode Selection** - "Draw It!" 🎨, "Act It!" 🎭, or "Describe It!" 📝  
 ✅ **Loading Indicators** - Real-time progress updates  
 ✅ **Responsive Design** - Works on all devices  
 ✅ **Modern UI/UX** - Beautiful animations and styling  

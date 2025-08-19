@@ -1191,17 +1191,33 @@ class ActDrawGame {
     }
 
     showRandomChallengeMode() {
-        // Randomly choose between "Draw It!" and "Act It!" for variety
-        const challengeModes = ['Draw It!', 'Act It!'];
+        // Randomly choose between "Draw It!", "Act It!", and "Describe It!" for variety
+        const challengeModes = ['Draw It!', 'Act It!', 'Describe It!'];
         const randomMode = challengeModes[Math.floor(Math.random() * challengeModes.length)];
         
         // Update the challenge mode display
         const challengeMode = document.getElementById('challengeMode');
         if (challengeMode) {
+            let emoji, description;
+            
+            if (randomMode === 'Draw It!') {
+                emoji = '🎨';
+                description = 'Draw the title without using words or letters!';
+            } else if (randomMode === 'Act It!') {
+                emoji = '🎭';
+                description = 'Act out the title using only gestures and expressions!';
+            } else if (randomMode === 'Describe It!') {
+                emoji = '📝';
+                description = 'Describe the plot without mentioning the title, characters, or actors!';
+            }
+            
             challengeMode.innerHTML = `
                 <div class="challenge-instruction">
-                    <span class="challenge-emoji">${randomMode === 'Draw It!' ? '🎨' : '🎭'}</span>
+                    <span class="challenge-emoji">${emoji}</span>
                     <span class="challenge-text">${randomMode}</span>
+                </div>
+                <div class="challenge-description">
+                    <p>${description}</p>
                 </div>
             `;
         }

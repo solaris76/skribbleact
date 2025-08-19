@@ -80,17 +80,23 @@ The game fetches content from multiple sources:
 - Use any drawing surface
 - No words or letters!
 
+### 📝 **Describe Mode**
+- Perfect for storytellers and wordsmiths
+- Describe the plot and story without revealing the title
+- **Rules**: No character names, no actor names, no title mentions
+- Use creative descriptions and plot details to help others guess
+
 ### 🎲 **Random Mode Selection**
-- **Every challenge** randomly shows either "Draw It!" or "Act It!"
+- **Every challenge** randomly shows either "Draw It!" 🎨, "Act It!" 🎭, or "Describe It!" 📝
 - **Independent of content type** - films can be "Draw It!" and TV shows can be "Act It!"
-- **50/50 chance** for variety and surprise
+- **33% chance** for each mode for maximum variety and surprise
 
 ## 🎮 Game Flow
 
 1. **Loading Screen** → Fresh challenges loading with progress indicator
 2. **Welcome Screen** → Ready to play with challenge count
 3. **Generate Challenge** → Get random title with random mode
-4. **Mode Display** → See "Draw It!" 🎨 or "Act It!" 🎭
+4. **Mode Display** → See "Draw It!" 🎨, "Act It!" 🎭, or "Describe It!" 📝
 5. **Game Timer** → 60-second countdown with visual feedback
 6. **Results** → Time's up!
 7. **Next Round** → Continue playing with new random mode
@@ -113,6 +119,7 @@ The game fetches content from multiple sources:
 - **Time Management**: Use the full 60 seconds strategically
 - **Creativity**: Think outside the box for challenging titles
 - **Variety**: Every reload brings completely fresh challenges!
+- **Three Modes**: Draw, Act, or Describe for maximum gameplay variety
 
 ## 🐛 Troubleshooting
 

@@ -154,9 +154,33 @@ body {
 }
 
 .challenge-description {
-    font-size: 1.1rem;
-    color: #64748b;
-    line-height: 1.6;
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
+    border-left: 4px solid #fbbf24;
+}
+
+.challenge-description p {
+    margin: 0;
+    font-size: 1rem;
+    color: #78350f;
+    font-weight: 500;
+    line-height: 1.4;
+    text-align: center;
+}
+
+/* Mode-specific styling */
+.challenge-instruction[data-mode="describe"] .challenge-emoji {
+    color: #059669;
+}
+
+.challenge-instruction[data-mode="draw"] .challenge-emoji {
+    color: #dc2626;
+}
+
+.challenge-instruction[data-mode="act"] .challenge-emoji {
+    color: #7c3aed;
 }
 
 /* Action Buttons */
