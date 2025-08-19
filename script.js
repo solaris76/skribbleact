@@ -1187,19 +1187,8 @@ class ActDrawGame {
     }
 
     showRandomChallengeMode() {
-        // Determine if this content has memorable music
-        const hasMemorableMusic = this.checkIfHasMemorableMusic(this.currentChallenge);
-        
-        // Choose challenge modes based on content type
-        let challengeModes;
-        if (hasMemorableMusic) {
-            // Include "Sing It!" for content with memorable music
-            challengeModes = ['Draw It!', 'Act It!', 'Describe It!', 'Sing It!'];
-        } else {
-            // Use only the three main modes for content without memorable music
-            challengeModes = ['Draw It!', 'Act It!', 'Describe It!'];
-        }
-        
+        // Use the three reliable challenge modes
+        const challengeModes = ['Draw It!', 'Act It!', 'Describe It!'];
         const randomMode = challengeModes[Math.floor(Math.random() * challengeModes.length)];
         
         // Update the challenge mode display
@@ -1216,10 +1205,7 @@ class ActDrawGame {
             } else if (randomMode === 'Describe It!') {
                 emoji = '📝';
                 description = 'Describe the plot without mentioning the title, characters, or actors!';
-            } else if (randomMode === 'Sing It!') {
-                emoji = '🎵';
-                description = 'Hum or sing the theme music without any lyrics - just melody and rhythm!';
-            
+            }
             
             challengeMode.innerHTML = `
                 <div class="challenge-instruction">
@@ -1251,37 +1237,10 @@ class ActDrawGame {
             modeSelection.style.display = 'block';
         }
         
-        console.log(`🎯 Random challenge mode: ${randomMode} (Has memorable music: ${hasMemorableMusic})`);
+        console.log(`🎯 Random challenge mode: ${randomMode}`);
     }
 
-    checkIfHasMemorableMusic(challenge) {
-        // List of films and shows with truly memorable, recognizable music
-        const memorableMusicTitles = [
-            // Films with iconic music
-            'Star Wars', 'The Empire Strikes Back', 'Return of the Jedi', 'The Phantom Menace', 'Attack of the Clones', 'Revenge of the Sith',
-            'Jaws', 'Mission Impossible', 'The Good, the Bad and the Ugly', 'The Magnificent Seven',
-            'The Lion King', 'Frozen', 'Beauty and the Beast', 'Aladdin', 'The Little Mermaid',
-            'Indiana Jones', 'Raiders of the Lost Ark', 'Temple of Doom', 'Last Crusade',
-            'Superman', 'Batman', 'Spider-Man', 'Iron Man', 'The Avengers',
-            'Titanic', 'Ghostbusters', 'Back to the Future', 'E.T.', 'Jurassic Park',
-            'The Godfather', 'Rocky', 'Top Gun', 'Dirty Dancing', 'Grease',
-            'The Sound of Music', 'West Side Story', 'Mary Poppins', 'Chitty Chitty Bang Bang',
-            
-            // TV Shows with memorable themes
-            'Game of Thrones', 'Stranger Things', 'The X-Files', 'Friends', 'Seinfeld',
-            'The Simpsons', 'South Park', 'Family Guy', 'The Fresh Prince of Bel-Air',
-            'Doctor Who', 'The Twilight Zone', 'The Brady Bunch', 'Gilligan\'s Island',
-            'Mission Impossible', 'Hawaii Five-O', 'The A-Team', 'Knight Rider',
-            'Dallas', 'Dynasty', 'Miami Vice', 'Magnum P.I.'
-        ];
-        
-        // Check if the challenge title contains any of these memorable music titles
-        const challengeTitle = challenge.title.toLowerCase();
-        return memorableMusicTitles.some(title => 
-            challengeTitle.includes(title.toLowerCase()) || 
-            title.toLowerCase().includes(challengeTitle)
-        );
-    }
+
 
     startChallenge(mode) {
         console.log(`🚀 Starting challenge in ${mode} mode`);
@@ -1303,9 +1262,7 @@ class ActDrawGame {
             modeText = 'Acting';
         } else if (mode === 'Describe It!') {
             modeText = 'Describing';
-        } else if (mode === 'Sing It!') {
-            modeText = 'Singing';
-
+        }
         
         this.showMessage(`🎯 ${modeText} mode activated! Good luck!`, 'game');
     }

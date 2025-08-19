@@ -86,27 +86,22 @@ The game fetches content from multiple sources:
 - **Rules**: No character names, no actor names, no title mentions
 - Use creative descriptions and plot details to help others guess
 
-### 🎵 **Sing Mode**
-- Perfect for musical players and those who love soundtracks
-- Hum or sing the theme music without revealing the title
-- **Rules**: No lyrics allowed - just melody and rhythm
-- Use the iconic music and themes to help others guess
-- **Smart Mode**: Only appears for content with truly memorable music
 
 
 
-### 🎲 **Smart Mode Selection**
-- **Content with memorable music**: "Draw It!" 🎨, "Act It!" 🎭, "Describe It!" 📝, or "Sing It!" 🎵
-- **Content without memorable music**: "Draw It!" 🎨, "Act It!" 🎭, or "Describe It!" 📝
-- **"Sing It!" only appears** when it makes sense - for films/shows with iconic soundtracks
-- **Smart variety** based on content type for better gameplay experience
+
+### 🎲 **Mode Selection**
+- **Three reliable modes**: "Draw It!" 🎨, "Act It!" 🎭, "Describe It!" 📝
+- **33% chance** for each mode for consistent variety
+- **All modes work** for any type of content
+- **Simple and reliable** gameplay experience
 
 ## 🎮 Game Flow
 
 1. **Loading Screen** → Fresh challenges loading with progress indicator
 2. **Welcome Screen** → Ready to play with challenge count
 3. **Generate Challenge** → Get random title with random mode
-4. **Mode Display** → See "Draw It!" 🎨, "Act It!" 🎭, "Describe It!" 📝, or "Sing It!" 🎵
+4. **Mode Display** → See "Draw It!" 🎨, "Act It!" 🎭, or "Describe It!" 📝
 5. **Game Timer** → 60-second countdown with visual feedback
 6. **Results** → Time's up!
 7. **Next Round** → Continue playing with new random mode
@@ -129,7 +124,7 @@ The game fetches content from multiple sources:
 - **Time Management**: Use the full 60 seconds strategically
 - **Creativity**: Think outside the box for challenging titles
 - **Variety**: Every reload brings completely fresh challenges!
-- **Smart Four Modes**: Draw, Act, Describe, and Sing (when appropriate) for intelligent gameplay variety
+- **Three Reliable Modes**: Draw, Act, and Describe for consistent, fun gameplay
 
 ## 🐛 Troubleshooting
 

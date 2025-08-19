@@ -211,10 +211,7 @@ body {
     color: #7c3aed;
 }
 
-.challenge-instruction[data-mode="sing"] .challenge-emoji {
-    color: #f59e0b;
-    animation: pulse 1.5s ease-in-out infinite alternate;
-}
+
 
 
 
