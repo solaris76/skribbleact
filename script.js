@@ -222,8 +222,20 @@ class ActDrawGame {
     async fetchFilms() {
         try {
             console.log('🎬 Fetching popular films from TMDB...');
-            const response = await fetch('https://api.themoviedb.org/3/movie/popular?api_key=1b7c076a0e4849aeefd1f3c429c79f3b&language=en-US&page=1');
-            const data = await response.json();
+            
+            // Try TMDB first
+            const tmdbResponse = await fetch('https://api.themoviedb.org/3/movie/popular?api_key=1b7c076a0e4849aeefd1f3c429c79f3b&language=en-US&page=1');
+            
+            if (!tmdbResponse.ok) {
+                throw new Error(`TMDB API error: ${tmdbResponse.status} ${tmdbResponse.statusText}`);
+            }
+            
+            const data = await tmdbResponse.json();
+            console.log('📊 TMDB response:', data);
+            
+            if (!data.results || !Array.isArray(data.results)) {
+                throw new Error('TMDB API returned invalid data structure');
+            }
             
             const films = data.results.slice(0, 25).map(movie => ({
                 title: movie.title,
@@ -233,10 +245,54 @@ class ActDrawGame {
                 source: 'TMDB Popular'
             }));
             
-            console.log(`✅ Fetched ${films.length} popular films`);
+            console.log(`✅ Fetched ${films.length} popular films from TMDB`);
             return films;
+            
         } catch (error) {
-            console.error('❌ Error fetching films:', error);
+            console.error('❌ Error fetching films from TMDB:', error);
+            
+            // Fallback to a different approach - use a public movie database
+            console.log('🔄 Trying fallback film source...');
+            try {
+                const fallbackFilms = await this.fetchFallbackFilms();
+                console.log(`✅ Fallback fetched ${fallbackFilms.length} films`);
+                return fallbackFilms;
+            } catch (fallbackError) {
+                console.error('❌ Fallback also failed:', fallbackError);
+                return [];
+            }
+        }
+    }
+
+    async fetchFallbackFilms() {
+        try {
+            console.log('🎬 Fetching films from fallback source...');
+            
+            // Use a simple public movie list as fallback
+            const fallbackMovies = [
+                'The Shawshank Redemption', 'The Godfather', 'Pulp Fiction', 'Fight Club',
+                'Forrest Gump', 'The Matrix', 'Goodfellas', 'The Silence of the Lambs',
+                'Interstellar', 'The Dark Knight', 'Inception', 'The Departed',
+                'Gladiator', 'The Lord of the Rings', 'Titanic', 'Avatar',
+                'Jurassic Park', 'Back to the Future', 'E.T.', 'Jaws',
+                'Rocky', 'Die Hard', 'Indiana Jones', 'Ghostbusters',
+                'The Terminator', 'Alien', 'The Exorcist', 'The Shining',
+                'A Clockwork Orange', '2001: A Space Odyssey', 'Apocalypse Now',
+                'Taxi Driver', 'Raging Bull', 'Casino', 'Heat', 'Collateral'
+            ];
+            
+            const films = fallbackMovies.map(title => ({
+                title: title,
+                type: 'Film',
+                category: 'Classic',
+                year: '',
+                source: 'Fallback Database'
+            }));
+            
+            return films;
+            
+        } catch (error) {
+            console.error('❌ Fallback film fetch failed:', error);
             return [];
         }
     }
@@ -245,7 +301,17 @@ class ActDrawGame {
         try {
             console.log('🎬 Fetching more films from TMDB...');
             const response = await fetch('https://api.themoviedb.org/3/movie/top_rated?api_key=1b7c076a0e4849aeefd1f3c429c79f3b&language=en-US&page=1');
+            
+            if (!response.ok) {
+                throw new Error(`TMDB Top Rated API error: ${response.status} ${response.statusText}`);
+            }
+            
             const data = await response.json();
+            console.log('📊 TMDB Top Rated response:', data);
+            
+            if (!data.results || !Array.isArray(data.results)) {
+                throw new Error('TMDB Top Rated API returned invalid data structure');
+            }
             
             const films = data.results.slice(0, 15).map(movie => ({
                 title: movie.title,
@@ -255,10 +321,11 @@ class ActDrawGame {
                 source: 'TMDB Top Rated'
             }));
             
-            console.log(`✅ Fetched ${films.length} top rated films`);
+            console.log(`✅ Fetched ${films.length} top rated films from TMDB`);
             return films;
+            
         } catch (error) {
-            console.error('❌ Error fetching more films:', error);
+            console.error('❌ Error fetching more films from TMDB:', error);
             return [];
         }
     }
@@ -267,7 +334,17 @@ class ActDrawGame {
         try {
             console.log('📺 Fetching UK TV shows from TV Maze...');
             const response = await fetch('https://api.tvmaze.com/schedule?country=GB&date=' + new Date().toISOString().split('T')[0]);
+            
+            if (!response.ok) {
+                throw new Error(`TV Maze API error: ${response.status} ${response.statusText}`);
+            }
+            
             const data = await response.json();
+            console.log('📊 TV Maze response:', data);
+            
+            if (!Array.isArray(data)) {
+                throw new Error('TV Maze API returned invalid data structure');
+            }
             
             const ukShows = data
                 .filter(show => show.show && show.show.name)
@@ -280,11 +357,33 @@ class ActDrawGame {
                     source: 'TV Maze Schedule'
                 }));
             
-            console.log(`✅ Fetched ${ukShows.length} UK TV shows`);
+            console.log(`✅ Fetched ${ukShows.length} UK TV shows from TV Maze`);
             return ukShows;
+            
         } catch (error) {
-            console.error('❌ Error fetching UK TV shows:', error);
-            return [];
+            console.error('❌ Error fetching UK TV shows from TV Maze:', error);
+            
+            // Fallback to basic UK shows
+            console.log('🔄 Using fallback UK TV shows...');
+            const fallbackUKShows = [
+                'Doctor Who', 'EastEnders', 'Coronation Street', 'Emmerdale',
+                'The Great British Bake Off', 'Top Gear', 'Strictly Come Dancing',
+                'Britain\'s Got Talent', 'The X Factor', 'Match of the Day',
+                'Antiques Roadshow', 'Gardeners\' World', 'Countryfile',
+                'The One Show', 'This Morning', 'Loose Women', 'Good Morning Britain',
+                'BBC News', 'ITV News', 'Channel 4 News', 'Sky News'
+            ];
+            
+            const shows = fallbackUKShows.map(title => ({
+                title: title,
+                type: 'TV Show',
+                category: 'UK Classic',
+                network: 'Various',
+                source: 'Fallback UK Shows'
+            }));
+            
+            console.log(`✅ Fallback fetched ${shows.length} UK TV shows`);
+            return shows;
         }
     }
 
@@ -292,7 +391,17 @@ class ActDrawGame {
         try {
             console.log('📺 Fetching more TV shows from TV Maze...');
             const response = await fetch('https://api.tvmaze.com/shows?page=1');
+            
+            if (!response.ok) {
+                throw new Error(`TV Maze Shows API error: ${response.status} ${response.statusText}`);
+            }
+            
             const data = await response.json();
+            console.log('📊 TV Maze Shows response:', data);
+            
+            if (!Array.isArray(data)) {
+                throw new Error('TV Maze Shows API returned invalid data structure');
+            }
             
             const tvShows = data
                 .filter(show => show.name && show.language === 'English')
@@ -305,11 +414,31 @@ class ActDrawGame {
                     source: 'TV Maze Shows'
                 }));
             
-            console.log(`✅ Fetched ${tvShows.length} additional TV shows`);
+            console.log(`✅ Fetched ${tvShows.length} additional TV shows from TV Maze`);
             return tvShows;
+            
         } catch (error) {
-            console.error('❌ Error fetching more TV shows:', error);
-            return [];
+            console.error('❌ Error fetching more TV shows from TV Maze:', error);
+            
+            // Fallback to basic international shows
+            console.log('🔄 Using fallback international TV shows...');
+            const fallbackIntShows = [
+                'Breaking Bad', 'Game of Thrones', 'The Office', 'Friends',
+                'The Crown', 'Peaky Blinders', 'Downton Abbey', 'Sherlock',
+                'Black Mirror', 'The Inbetweeners', 'Stranger Things',
+                'The Walking Dead', 'Modern Family', 'The Big Bang Theory'
+            ];
+            
+            const shows = fallbackIntShows.map(title => ({
+                title: title,
+                type: 'TV Show',
+                category: 'International',
+                network: 'Various',
+                source: 'Fallback International Shows'
+            }));
+            
+            console.log(`✅ Fallback fetched ${shows.length} international TV shows`);
+            return shows;
         }
     }
 
