@@ -1,0 +1,20 @@
+{
+  "name": "skribbleact",
+  "version": "1.0.0",
+  "description": "A fun game combining charades and Pictionary with film titles and UK TV shows",
+  "main": "index.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["game", "charades", "pictionary", "films", "tv-shows"],
+  "author": "Your Name",
+  "license": "MIT"
+}
