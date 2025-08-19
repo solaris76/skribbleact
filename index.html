@@ -3,74 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SkribbleAct - Film & TV Game</title>
-    
-    <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#667eea">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="SkribbleAct">
-    
-    <!-- PWA Manifest -->
-    <link rel="manifest" href="/manifest.json">
-    
-    <!-- Icons -->
-    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png">
-    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png">
-    <link rel="apple-touch-icon" href="/icon-192.png">
-    
+    <title>ActDraw - Film & TV Challenge Game</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header class="header">
-            <h1 class="title">🎬 SkribbleAct 🎨</h1>
-            <p class="subtitle">Film Titles & UK TV Shows</p>
-        </header>
-
-        <main class="game-area">
-            <div class="challenge-card" id="challengeCard">
-                <div class="challenge-content">
-                    <h2 class="challenge-title">Ready to Play?</h2>
-                    <p class="challenge-description">Tap the button below to get a random film or TV show!</p>
+        <h1>🎬 ActDraw</h1>
+        <p>Draw films and TV shows for your team to guess!</p>
+        
+        <!-- Loading Indicator -->
+        <div id="loadingIndicator" class="loading-container">
+            <div class="loading-spinner"></div>
+            <div class="loading-text">Loading fresh challenges...</div>
+            <div class="loading-progress">
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
+                </div>
+                <div class="progress-text">0%</div>
+            </div>
+            <div class="loading-status">Initializing...</div>
+        </div>
+        
+        <!-- Game Container (hidden until loaded) -->
+        <div id="gameContainer" class="game-container" style="display: none;">
+            <div class="challenge-section">
+                <h2>Current Challenge:</h2>
+                <div id="challengeCard" class="challenge-card">
+                    <div id="challengeTitle" class="challenge-title">Click 'New Challenge' to start!</div>
+                    <div id="challengeInfo" class="challenge-info"></div>
+                </div>
+                <button id="newChallengeBtn" class="btn btn-primary">New Challenge</button>
+            </div>
+            
+            <div class="stats-section">
+                <h3>Challenge Stats:</h3>
+                <div id="challengeStats" class="stats-grid">
+                    <div class="stat-item">
+                        <span class="stat-label">Total Challenges:</span>
+                        <span id="totalChallenges" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Used:</span>
+                        <span id="usedChallenges" class="stat-value">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Remaining:</span>
+                        <span id="remainingChallenges" class="stat-value">0</span>
+                    </div>
                 </div>
             </div>
-
-            <div class="action-buttons">
-                <button class="btn btn-primary" id="generateBtn">
-                    🎲 Generate Challenge
-                </button>
-            </div>
-
-            <div class="mode-selection" id="modeSelection" style="display: none;">
-                <h3>Your Challenge:</h3>
-                <div class="challenge-mode" id="challengeMode">
-                    <!-- Mode will be randomly selected and displayed here -->
-                </div>
-            </div>
-
-            <div class="timer-section" id="timerSection" style="display: none;">
-                <div class="timer-display">
-                    <span class="timer-label">Time Remaining:</span>
-                    <span class="timer" id="timer">60</span>
-                </div>
-                <div class="timer-controls">
-                    <button class="btn btn-sound" id="muteBtn">
-                        🔇 Mute
-                    </button>
-                    <button class="btn btn-secondary" id="nextBtn">
-                        Next Challenge
-                    </button>
-                </div>
-            </div>
-        </main>
-
-        <footer class="footer">
-            <p>Have fun playing SkribbleAct! 🎉</p>
-        </footer>
+        </div>
     </div>
-
+    
     <script src="script.js"></script>
 </body>
 </html>

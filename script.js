@@ -193,6 +193,9 @@ class ActDrawGame {
         console.log(`🆔 Session ID: ${this.sessionId}`);
         console.log(`📱 Page load count: ${++this.pageLoadCount}`);
         
+        // Show loading indicator
+        this.showLoadingIndicator();
+        
         // Force fresh content on each page load
         this.forceFreshContent();
         
@@ -201,50 +204,103 @@ class ActDrawGame {
         
         await this.loadChallenges();
         this.loadUsedChallenges();
+        this.hideLoadingIndicator();
+        this.showGameContainer();
         this.showReadyState();
+    }
+
+    showLoadingIndicator() {
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        const gameContainer = document.getElementById('gameContainer');
+        
+        if (loadingIndicator) loadingIndicator.style.display = 'block';
+        if (gameContainer) gameContainer.style.display = 'none';
+        
+        this.updateLoadingStatus('Initializing...', 0);
+    }
+
+    hideLoadingIndicator() {
+        const loadingIndicator = document.getElementById('loadingIndicator');
+        if (loadingIndicator) loadingIndicator.style.display = 'none';
+    }
+
+    showGameContainer() {
+        const gameContainer = document.getElementById('gameContainer');
+        if (gameContainer) {
+            gameContainer.style.display = 'block';
+            // Trigger animation after a small delay
+            setTimeout(() => {
+                gameContainer.classList.add('loaded');
+            }, 100);
+        }
+    }
+
+    updateLoadingStatus(status, progress) {
+        const loadingStatus = document.querySelector('.loading-status');
+        const progressFill = document.querySelector('.progress-fill');
+        const progressText = document.querySelector('.progress-text');
+        
+        if (loadingStatus) loadingStatus.textContent = status;
+        if (progressFill) progressFill.style.width = `${progress}%`;
+        if (progressText) progressText.textContent = `${progress}%`;
     }
 
     async testAPIConnectivity() {
         console.log('🔍 Testing API connectivity...');
+        this.updateLoadingStatus('Testing API connectivity...', 10);
         
         try {
             // Test TMDB connectivity
             console.log('🔄 Testing TMDB API...');
+            this.updateLoadingStatus('Testing TMDB API...', 20);
             const tmdbTest = await fetch('https://api.themoviedb.org/3/configuration?api_key=1b7c076a0e4849aeefd1f3c429c79f3b');
             if (tmdbTest.ok) {
                 console.log('✅ TMDB API is accessible');
+                this.updateLoadingStatus('TMDB API: ✅ Accessible', 30);
             } else {
                 console.error('❌ TMDB API is not accessible:', tmdbTest.status, tmdbTest.statusText);
+                this.updateLoadingStatus('TMDB API: ❌ Not accessible', 30);
             }
         } catch (error) {
             console.error('❌ TMDB API connectivity test failed:', error);
+            this.updateLoadingStatus('TMDB API: ❌ Connection failed', 30);
         }
         
         try {
             // Test OMDB connectivity
             console.log('🔄 Testing OMDB API...');
+            this.updateLoadingStatus('Testing OMDB API...', 40);
             const omdbTest = await fetch('https://www.omdbapi.com/?t=test&apikey=59fed1d4');
             if (omdbTest.ok) {
                 console.log('✅ OMDB API is accessible');
+                this.updateLoadingStatus('OMDB API: ✅ Accessible', 50);
             } else {
                 console.error('❌ OMDB API is not accessible:', omdbTest.status, omdbTest.statusText);
+                this.updateLoadingStatus('OMDB API: ❌ Not accessible', 50);
             }
         } catch (error) {
             console.error('❌ OMDB API connectivity test failed:', error);
+            this.updateLoadingStatus('OMDB API: ❌ Connection failed', 50);
         }
         
         try {
             // Test TV Maze connectivity
             console.log('🔄 Testing TV Maze API...');
+            this.updateLoadingStatus('Testing TV Maze API...', 60);
             const tvmazeTest = await fetch('https://api.tvmaze.com/search/shows?q=test');
             if (tvmazeTest.ok) {
                 console.log('✅ TV Maze API is accessible');
+                this.updateLoadingStatus('TV Maze API: ✅ Accessible', 70);
             } else {
                 console.error('❌ TV Maze API is not accessible:', tvmazeTest.status, tvmazeTest.statusText);
+                this.updateLoadingStatus('TV Maze API: ❌ Not accessible', 70);
             }
         } catch (error) {
             console.error('❌ TV Maze API connectivity test failed:', error);
+            this.updateLoadingStatus('TV Maze API: ❌ Connection failed', 70);
         }
+        
+        this.updateLoadingStatus('APIs tested, loading challenges...', 80);
     }
 
     forceFreshContent() {
@@ -263,6 +319,8 @@ class ActDrawGame {
 
     async loadChallenges() {
         console.log('📡 Loading 50 fresh challenges from APIs...');
+        this.updateLoadingStatus('Loading fresh challenges from APIs...', 85);
+        
         try {
             // Clear any existing challenges
             this.challenges = [];
@@ -274,7 +332,10 @@ class ActDrawGame {
             console.log(`🆔 Session ID: ${this.sessionId}`);
             
             // Fetch fresh films and TV shows
+            this.updateLoadingStatus('Fetching films from APIs...', 90);
             const films = await this.fetchFilms();
+            
+            this.updateLoadingStatus('Fetching TV shows from APIs...', 95);
             const tvShows = await this.fetchUKTVShows();
             
             // Combine and ensure exactly 50 challenges
@@ -283,6 +344,7 @@ class ActDrawGame {
             // If we don't have enough, fetch more from different sources
             if (allChallenges.length < 50) {
                 console.log(`📊 Only got ${allChallenges.length} challenges, fetching more...`);
+                this.updateLoadingStatus('Fetching additional content...', 97);
                 const additionalFilms = await this.fetchMoreFilms();
                 const additionalTV = await this.fetchMoreTVShows();
                 allChallenges = [...allChallenges, ...additionalFilms, ...additionalTV];
@@ -297,15 +359,20 @@ class ActDrawGame {
             // Add session-specific challenge rotation
             this.rotateChallengesForSession();
             
+            this.updateLoadingStatus('Finalizing challenge set...', 99);
+            
             console.log(`✅ Loaded ${this.challenges.length} fresh challenges`);
             console.log('🎬 Films:', this.challenges.filter(c => c.type === 'Film').length);
             console.log('📺 TV Shows:', this.challenges.filter(c => c.type === 'TV Show').length);
             console.log('🔄 Final shuffle applied for maximum variety');
             console.log('🔄 Session-specific rotation applied');
             
+            this.updateLoadingStatus('Challenges loaded successfully!', 100);
+            
         } catch (error) {
             console.error('❌ Error loading challenges:', error);
             this.challenges = [];
+            this.updateLoadingStatus('Error loading challenges, using fallbacks...', 100);
         }
     }
 
@@ -334,12 +401,15 @@ class ActDrawGame {
 
     async fetchFilms() {
         console.log('🎬 Fetching popular films from multiple sources...');
+        this.updateLoadingStatus('Fetching films from TMDB...', 90);
+        
         try {
             // Try TMDB first
             console.log('🔄 Attempting TMDB API...');
             const tmdbFilms = await this.fetchFilmsFromTMDB();
             if (tmdbFilms.length > 0) {
                 console.log(`✅ TMDB: ${tmdbFilms.length} films`);
+                this.updateLoadingStatus(`TMDB: ${tmdbFilms.length} films loaded`, 92);
                 return tmdbFilms;
             } else {
                 console.log('❌ TMDB returned 0 films');
@@ -347,9 +417,11 @@ class ActDrawGame {
 
             // Fallback to OMDB if TMDB fails
             console.log('🔄 TMDB failed, trying OMDB...');
+            this.updateLoadingStatus('TMDB failed, trying OMDB...', 93);
             const omdbFilms = await this.fetchFilmsFromOMDB();
             if (omdbFilms.length > 0) {
                 console.log(`✅ OMDB: ${omdbFilms.length} films`);
+                this.updateLoadingStatus(`OMDB: ${omdbFilms.length} films loaded`, 94);
                 return omdbFilms;
             } else {
                 console.log('❌ OMDB returned 0 films');
@@ -357,11 +429,13 @@ class ActDrawGame {
 
             // Final fallback to our database
             console.log('🔄 All APIs failed, using fallback database...');
+            this.updateLoadingStatus('Using fallback film database...', 95);
             return await this.fetchFallbackFilms();
 
         } catch (error) {
             console.error('❌ Error fetching films:', error);
             console.log('🔄 Using fallback due to error...');
+            this.updateLoadingStatus('Error fetching films, using fallback...', 95);
             return await this.fetchFallbackFilms();
         }
     }
@@ -671,31 +745,31 @@ class ActDrawGame {
     }
 
     async fetchUKTVShows() {
+        console.log('📺 Fetching UK TV shows from multiple sources...');
+        this.updateLoadingStatus('Fetching UK TV shows from TV Maze...', 95);
+        
         try {
-            console.log('📺 Fetching UK TV shows from multiple sources...');
-            
             // Try TV Maze first
+            console.log('🔄 Attempting TV Maze API...');
             const tvMazeShows = await this.fetchUKTVShowsFromTVMaze();
             if (tvMazeShows.length > 0) {
-                console.log(`✅ TV Maze: ${tvMazeShows.length} UK TV shows`);
+                console.log(`✅ TV Maze: ${tvMazeShows.length} shows`);
+                this.updateLoadingStatus(`TV Maze: ${tvMazeShows.length} shows loaded`, 96);
                 return tvMazeShows;
+            } else {
+                console.log('❌ TV Maze returned 0 shows');
             }
-            
-            // Fallback to BBC/ITV data if TV Maze fails
-            console.log('🔄 TV Maze failed, trying BBC/ITV data...');
-            const bbcShows = await this.fetchUKTVShowsFromBBC();
-            if (bbcShows.length > 0) {
-                console.log(`✅ BBC/ITV: ${bbcShows.length} UK TV shows`);
-                return bbcShows;
-            }
-            
-            // Final fallback to our database
-            console.log('🔄 APIs failed, using fallback UK shows...');
-            return await this.fetchFallbackUKTVShows();
-            
+
+            // Fallback to BBC/ITV data
+            console.log('🔄 TV Maze failed, using BBC/ITV data...');
+            this.updateLoadingStatus('Using BBC/ITV show database...', 97);
+            return await this.fetchUKTVShowsFromBBC();
+
         } catch (error) {
             console.error('❌ Error fetching UK TV shows:', error);
-            return await this.fetchFallbackUKTVShows();
+            console.log('🔄 Using BBC/ITV fallback due to error...');
+            this.updateLoadingStatus('Error fetching TV shows, using fallback...', 97);
+            return await this.fetchUKTVShowsFromBBC();
         }
     }
 
@@ -1254,21 +1328,24 @@ class ActDrawGame {
     }
 
     showReadyState() {
-        console.log('🎉 App ready! Fresh challenges loaded.');
-        const challengeCard = document.getElementById('challengeCard');
-        const title = document.querySelector('.challenge-title');
-        const description = document.querySelector('.challenge-description');
+        console.log('🎯 Ready to play!');
         
-        title.textContent = '🎬 Fresh Challenges Loaded!';
-        description.innerHTML = `
-            <strong>Total Challenges:</strong> ${this.challenges.length}<br>
-            <strong>Films:</strong> ${this.challenges.filter(c => c.type === 'Film').length}<br>
-            <strong>TV Shows:</strong> ${this.challenges.filter(c => c.type === 'TV Show').length}<br>
-            <br>
-            <em>Every reload brings 50 completely fresh challenges!</em>
-        `;
+        // Update stats display
+        const totalChallenges = document.getElementById('totalChallenges');
+        const usedChallenges = document.getElementById('usedChallenges');
+        const remainingChallenges = document.getElementById('remainingChallenges');
         
-        challengeCard.classList.add('active');
+        if (totalChallenges) totalChallenges.textContent = this.challenges.length;
+        if (usedChallenges) usedChallenges.textContent = this.usedChallenges.size;
+        if (remainingChallenges) remainingChallenges.textContent = this.challenges.length - this.usedChallenges.size;
+        
+        // Show first challenge
+        this.generateChallenge();
+        
+        console.log(`📊 Challenges loaded: ${this.challenges.length}`);
+        console.log(`📊 Films: ${this.challenges.filter(c => c.type === 'Film').length}`);
+        console.log(`📊 TV Shows: ${this.challenges.filter(c => c.type === 'TV Show').length}`);
+        console.log('🆕 Fresh Challenges Loaded!');
     }
 
     showModeSelection() {
@@ -1456,20 +1533,13 @@ class ActDrawGame {
     }
 
     bindEvents() {
-        document.getElementById('generateBtn').addEventListener('click', () => {
-            this.generateChallenge();
-        });
-
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            this.nextChallenge();
-        });
-
-        // Bind mute button (will be added dynamically)
-        document.addEventListener('click', (e) => {
-            if (e.target.id === 'muteBtn') {
-                this.toggleMute();
-            }
-        });
+        // Bind the new challenge button
+        const newChallengeBtn = document.getElementById('newChallengeBtn');
+        if (newChallengeBtn) {
+            newChallengeBtn.addEventListener('click', () => {
+                this.generateChallenge();
+            });
+        }
     }
 
     toggleMute() {

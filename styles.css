@@ -392,6 +392,193 @@ body {
     }
 }
 
+/* Loading Indicator Styles */
+.loading-container {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 20px;
+    color: white;
+    margin: 20px 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.loading-spinner {
+    width: 60px;
+    height: 60px;
+    border: 4px solid rgba(255, 255, 255, 0.3);
+    border-top: 4px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 20px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-text {
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.loading-progress {
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4ade80, #22c55e);
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.3s ease;
+    box-shadow: 0 0 10px rgba(74, 222, 128, 0.5);
+}
+
+.progress-text {
+    font-size: 18px;
+    font-weight: 500;
+    color: #4ade80;
+}
+
+.loading-status {
+    font-size: 16px;
+    opacity: 0.9;
+    font-style: italic;
+}
+
+/* Game Container Styles */
+.game-container {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.5s ease;
+}
+
+.game-container.loaded {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Challenge Section */
+.challenge-section {
+    text-align: center;
+    margin: 30px 0;
+}
+
+.challenge-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin: 20px 0;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    border: 2px solid #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.challenge-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+}
+
+.challenge-title {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 15px;
+    line-height: 1.3;
+}
+
+.challenge-info {
+    font-size: 16px;
+    color: #6b7280;
+    margin-bottom: 20px;
+}
+
+/* Stats Section */
+.stats-section {
+    background: #f9fafb;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 30px 0;
+    border: 1px solid #e5e7eb;
+}
+
+.stats-section h3 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #374151;
+    font-size: 20px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 15px;
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #e5e7eb;
+}
+
+.stat-label {
+    display: block;
+    font-size: 14px;
+    color: #6b7280;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+.stat-value {
+    display: block;
+    font-size: 24px;
+    font-weight: 700;
+    color: #059669;
+}
+
+/* Button Styles */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
@@ -423,6 +610,29 @@ body {
     .btn-act {
         margin-right: 0;
         margin-bottom: 15px;
+    }
+
+    .loading-container {
+        padding: 30px 15px;
+        margin: 15px 0;
+    }
+    
+    .loading-text {
+        font-size: 20px;
+    }
+    
+    .challenge-title {
+        font-size: 24px;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .btn {
+        padding: 10px 20px;
+        font-size: 14px;
     }
 }
 
