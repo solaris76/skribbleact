@@ -196,9 +196,55 @@ class ActDrawGame {
         // Force fresh content on each page load
         this.forceFreshContent();
         
+        // Test API connectivity first
+        await this.testAPIConnectivity();
+        
         await this.loadChallenges();
         this.loadUsedChallenges();
         this.showReadyState();
+    }
+
+    async testAPIConnectivity() {
+        console.log('🔍 Testing API connectivity...');
+        
+        try {
+            // Test TMDB connectivity
+            console.log('🔄 Testing TMDB API...');
+            const tmdbTest = await fetch('https://api.themoviedb.org/3/configuration?api_key=1b7c076a0e4849aeefd1f3c429c79f3b');
+            if (tmdbTest.ok) {
+                console.log('✅ TMDB API is accessible');
+            } else {
+                console.error('❌ TMDB API is not accessible:', tmdbTest.status, tmdbTest.statusText);
+            }
+        } catch (error) {
+            console.error('❌ TMDB API connectivity test failed:', error);
+        }
+        
+        try {
+            // Test OMDB connectivity
+            console.log('🔄 Testing OMDB API...');
+            const omdbTest = await fetch('https://www.omdbapi.com/?t=test&apikey=59fed1d4');
+            if (omdbTest.ok) {
+                console.log('✅ OMDB API is accessible');
+            } else {
+                console.error('❌ OMDB API is not accessible:', omdbTest.status, omdbTest.statusText);
+            }
+        } catch (error) {
+            console.error('❌ OMDB API connectivity test failed:', error);
+        }
+        
+        try {
+            // Test TV Maze connectivity
+            console.log('🔄 Testing TV Maze API...');
+            const tvmazeTest = await fetch('https://api.tvmaze.com/search/shows?q=test');
+            if (tvmazeTest.ok) {
+                console.log('✅ TV Maze API is accessible');
+            } else {
+                console.error('❌ TV Maze API is not accessible:', tvmazeTest.status, tvmazeTest.statusText);
+            }
+        } catch (error) {
+            console.error('❌ TV Maze API connectivity test failed:', error);
+        }
     }
 
     forceFreshContent() {
@@ -287,30 +333,35 @@ class ActDrawGame {
     }
 
     async fetchFilms() {
+        console.log('🎬 Fetching popular films from multiple sources...');
         try {
-            console.log('🎬 Fetching popular films from multiple sources...');
-            
             // Try TMDB first
+            console.log('🔄 Attempting TMDB API...');
             const tmdbFilms = await this.fetchFilmsFromTMDB();
             if (tmdbFilms.length > 0) {
                 console.log(`✅ TMDB: ${tmdbFilms.length} films`);
                 return tmdbFilms;
+            } else {
+                console.log('❌ TMDB returned 0 films');
             }
-            
+
             // Fallback to OMDB if TMDB fails
             console.log('🔄 TMDB failed, trying OMDB...');
             const omdbFilms = await this.fetchFilmsFromOMDB();
             if (omdbFilms.length > 0) {
                 console.log(`✅ OMDB: ${omdbFilms.length} films`);
                 return omdbFilms;
+            } else {
+                console.log('❌ OMDB returned 0 films');
             }
-            
+
             // Final fallback to our database
-            console.log('🔄 APIs failed, using fallback database...');
+            console.log('🔄 All APIs failed, using fallback database...');
             return await this.fetchFallbackFilms();
-            
+
         } catch (error) {
             console.error('❌ Error fetching films:', error);
+            console.log('🔄 Using fallback due to error...');
             return await this.fetchFallbackFilms();
         }
     }
@@ -345,17 +396,29 @@ class ActDrawGame {
             
             console.log(`📄 Using TMDB page ${randomPage} with sort: ${randomSort}, year around ${randomYear} (unused page)`);
             
-            const tmdbResponse = await fetch(`https://api.themoviedb.org/3/discover/movie?api_key=1b7c076a0e4849aeefd1f3c429c79f3b&language=en-US&page=${randomPage}&sort_by=${randomSort}&include_adult=false&include_video=false&vote_count.gte=50&vote_average.gte=5.5&year=${randomYear}`);
+            const apiUrl = `https://api.themoviedb.org/3/discover/movie?api_key=1b7c076a0e4849aeefd1f3c429c79f3b&language=en-US&page=${randomPage}&sort_by=${randomSort}&include_adult=false&include_video=false&vote_count.gte=50&vote_average.gte=5.5&year=${randomYear}`;
+            console.log(`🔗 TMDB API URL: ${apiUrl}`);
+            
+            const tmdbResponse = await fetch(apiUrl);
+            
+            console.log(`📊 TMDB Response Status: ${tmdbResponse.status} ${tmdbResponse.statusText}`);
             
             if (!tmdbResponse.ok) {
+                console.error(`❌ TMDB API error: ${tmdbResponse.status} ${tmdbResponse.statusText}`);
+                const errorText = await tmdbResponse.text();
+                console.error(`❌ TMDB Error Details: ${errorText}`);
                 throw new Error(`TMDB API error: ${tmdbResponse.status} ${tmdbResponse.statusText}`);
             }
             
             const data = await tmdbResponse.json();
+            console.log(`📊 TMDB Raw Response:`, data);
             
             if (!data.results || !Array.isArray(data.results)) {
+                console.error('❌ TMDB API returned invalid data structure:', data);
                 throw new Error('TMDB API returned invalid data structure');
             }
+            
+            console.log(`📊 TMDB Results Count: ${data.results.length}`);
             
             // Mark this page as used
             this.usedFilmPages.add(randomPage);
@@ -368,10 +431,12 @@ class ActDrawGame {
                 source: `TMDB Page ${randomPage} (${randomSort}, ${randomYear})`
             }));
             
+            console.log(`✅ TMDB Success: ${films.length} films processed`);
             return films;
             
         } catch (error) {
             console.error('❌ TMDB fetch failed:', error);
+            console.error('❌ TMDB Error Stack:', error.stack);
             return [];
         }
     }
@@ -379,26 +444,32 @@ class ActDrawGame {
     async fetchFilmsFromOMDB() {
         try {
             console.log('🎬 Fetching films from OMDB...');
-            
-            // Popular film titles to search for
             const popularTitles = [
-                'The Shawshank Redemption', 'The Godfather', 'Pulp Fiction', 'Fight Club',
-                'Forrest Gump', 'The Matrix', 'Goodfellas', 'The Silence of the Lambs',
-                'Interstellar', 'The Dark Knight', 'Inception', 'The Departed',
-                'Gladiator', 'The Lord of the Rings', 'Titanic', 'Avatar',
-                'Jurassic Park', 'Back to the Future', 'E.T.', 'Jaws'
+                'The Godfather', 'Casablanca', 'Citizen Kane', 'Gone with the Wind', 'Lawrence of Arabia',
+                'The Wizard of Oz', 'Vertigo', 'Psycho', '2001: A Space Odyssey', 'Apocalypse Now',
+                'Taxi Driver', 'Goodfellas', 'The Shawshank Redemption', 'Pulp Fiction', 'Fight Club',
+                'The Matrix', 'Inception', 'Interstellar', 'The Dark Knight', 'Forrest Gump',
+                'Titanic', 'Avatar', 'Jurassic Park', 'Star Wars', 'The Lord of the Rings',
+                'Harry Potter', 'The Lion King', 'Toy Story', 'Finding Nemo', 'Up',
+                'The Incredibles', 'Monsters Inc', 'Shrek', 'Frozen', 'Moana'
             ];
             
-            // Shuffle and take first 10 to avoid rate limits
             const shuffledTitles = this.shuffleArray([...popularTitles]).slice(0, 10);
-            const films = [];
+            console.log(`🎯 OMDB: Attempting to fetch ${shuffledTitles.length} titles:`, shuffledTitles);
             
+            const films = [];
             for (const title of shuffledTitles) {
                 try {
-                    // OMDB API (free tier: 1000 requests/day)
-                    const response = await fetch(`https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=59fed1d4`);
+                    const omdbUrl = `https://www.omdbapi.com/?t=${encodeURIComponent(title)}&apikey=59fed1d4`;
+                    console.log(`🔗 OMDB API URL for "${title}": ${omdbUrl}`);
+                    
+                    const response = await fetch(omdbUrl);
+                    console.log(`📊 OMDB Response Status for "${title}": ${response.status} ${response.statusText}`);
+                    
                     if (response.ok) {
                         const data = await response.json();
+                        console.log(`📊 OMDB Raw Response for "${title}":`, data);
+                        
                         if (data.Title && data.Response === 'True') {
                             films.push({
                                 title: data.Title,
@@ -407,20 +478,28 @@ class ActDrawGame {
                                 year: data.Year || '',
                                 source: 'OMDB API'
                             });
+                            console.log(`✅ OMDB Success: "${title}" -> "${data.Title}"`);
+                        } else {
+                            console.log(`❌ OMDB: "${title}" - Response: ${data.Response}, Error: ${data.Error}`);
                         }
+                    } else {
+                        console.error(`❌ OMDB HTTP Error for "${title}": ${response.status} ${response.statusText}`);
                     }
-                    // Small delay to avoid rate limiting
+                    
+                    // Small delay to avoid rate limits
                     await new Promise(resolve => setTimeout(resolve, 100));
+                    
                 } catch (error) {
-                    console.log(`Skipping ${title} due to error`);
+                    console.error(`❌ OMDB Error for "${title}":`, error);
                 }
             }
             
-            console.log(`✅ OMDB: ${films.length} films fetched`);
+            console.log(`✅ OMDB: ${films.length} films fetched successfully`);
             return films;
             
         } catch (error) {
             console.error('❌ OMDB fetch failed:', error);
+            console.error('❌ OMDB Error Stack:', error.stack);
             return [];
         }
     }
