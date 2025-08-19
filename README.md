@@ -91,11 +91,15 @@ The game fetches content from multiple sources:
 - Hum or sing the theme music without revealing the title
 - **Rules**: No lyrics allowed - just melody and rhythm
 - Use the iconic music and themes to help others guess
+- **Smart Mode**: Only appears for content with truly memorable music
 
-### 🎲 **Random Mode Selection**
-- **Every challenge** randomly shows either "Draw It!" 🎨, "Act It!" 🎭, "Describe It!" 📝, or "Sing It!" 🎵
-- **Independent of content type** - films can be "Draw It!" and TV shows can be "Act It!"
-- **25% chance** for each mode for maximum variety and surprise
+
+
+### 🎲 **Smart Mode Selection**
+- **Content with memorable music**: "Draw It!" 🎨, "Act It!" 🎭, "Describe It!" 📝, or "Sing It!" 🎵
+- **Content without memorable music**: "Draw It!" 🎨, "Act It!" 🎭, or "Describe It!" 📝
+- **"Sing It!" only appears** when it makes sense - for films/shows with iconic soundtracks
+- **Smart variety** based on content type for better gameplay experience
 
 ## 🎮 Game Flow
 
@@ -125,7 +129,7 @@ The game fetches content from multiple sources:
 - **Time Management**: Use the full 60 seconds strategically
 - **Creativity**: Think outside the box for challenging titles
 - **Variety**: Every reload brings completely fresh challenges!
-- **Four Modes**: Draw, Act, Describe, or Sing for maximum gameplay variety
+- **Smart Four Modes**: Draw, Act, Describe, and Sing (when appropriate) for intelligent gameplay variety
 
 ## 🐛 Troubleshooting
 
