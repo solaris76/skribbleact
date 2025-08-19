@@ -331,26 +331,23 @@ class ActDrawGame {
             console.log(`🎲 Random seed for this session: ${randomSeed}`);
             console.log(`🆔 Session ID: ${this.sessionId}`);
             
-            // Fetch fresh films only (TV shows commented out for now)
+            // Fetch fresh films and TV shows
             this.updateLoadingStatus('Fetching films from APIs...', 90);
             const films = await this.fetchFilms();
             
-            // TV shows commented out - only using films for now
-            // this.updateLoadingStatus('Fetching TV shows from APIs...', 95);
-            // const tvShows = await this.fetchUKTVShows();
+            this.updateLoadingStatus('Fetching TV shows from APIs...', 95);
+            const tvShows = await this.fetchUKTVShows();
             
-            // Combine and ensure exactly 50 challenges (films only)
-            let allChallenges = [...films];
-            // let allChallenges = [...films, ...tvShows]; // TV shows commented out
+            // Combine and ensure exactly 50 challenges
+            let allChallenges = [...films, ...tvShows];
             
             // If we don't have enough, fetch more from different sources
             if (allChallenges.length < 50) {
                 console.log(`📊 Only got ${allChallenges.length} challenges, fetching more...`);
                 this.updateLoadingStatus('Fetching additional content...', 97);
                 const additionalFilms = await this.fetchMoreFilms();
-                // const additionalTV = await this.fetchMoreTVShows(); // TV shows commented out
-                allChallenges = [...allChallenges, ...additionalFilms];
-                // allChallenges = [...allChallenges, ...additionalFilms, ...additionalTV]; // TV shows commented out
+                const additionalTV = await this.fetchMoreTVShows();
+                allChallenges = [...allChallenges, ...additionalFilms, ...additionalTV];
             }
             
             // Remove duplicates and ensure exactly 50 challenges
@@ -369,7 +366,6 @@ class ActDrawGame {
             console.log('📺 TV Shows:', this.challenges.filter(c => c.type === 'TV Show').length);
             console.log('🔄 Final shuffle applied for maximum variety');
             console.log('🔄 Session-specific rotation applied');
-            console.log('📺 Note: TV shows are currently commented out - films only');
             
             this.updateLoadingStatus('Challenges loaded successfully!', 100);
             
@@ -600,12 +596,6 @@ class ActDrawGame {
                 'Mad Max: Fury Road', 'The Revenant', 'Birdman', '12 Years a Slave', 'Argo'
             ];
             
-            const internationalFilms = [
-                'Parasite', 'Roma', 'Crouching Tiger, Hidden Dragon', 'Amélie', 'Life Is Beautiful',
-                'Cinema Paradiso', 'The Seventh Seal', '8½', 'La Dolce Vita', 'Bicycle Thieves',
-                'Rashomon', 'Seven Samurai', 'Spirited Away', 'My Neighbor Totoro', 'Princess Mononoke'
-            ];
-            
             const cultClassics = [
                 'The Rocky Horror Picture Show', 'Donnie Darko', 'The Big Lebowski', 'Office Space',
                 'Shaun of the Dead', 'Hot Fuzz', 'Scott Pilgrim vs. the World', 'Kick-Ass',
@@ -648,7 +638,6 @@ class ActDrawGame {
             const allFilms = [
                 ...classicFilms.map(film => ({ title: film, category: 'Classic' })),
                 ...modernBlockbusters.map(film => ({ title: film, category: 'Modern Blockbuster' })),
-                ...internationalFilms.map(film => ({ title: film, category: 'International' })),
                 ...cultClassics.map(film => ({ title: film, category: 'Cult Classic' })),
                 ...sciFiFantasy.map(film => ({ title: film, category: 'Sci-Fi & Fantasy' })),
                 ...actionAdventure.map(film => ({ title: film, category: 'Action & Adventure' })),
@@ -1287,22 +1276,21 @@ class ActDrawGame {
         const title = document.querySelector('.challenge-title');
         const description = document.querySelector('.challenge-description');
         
-        if (title) title.textContent = '🎬 Fresh Film Challenges Loaded!';
+        if (title) title.textContent = '🎬 Fresh Challenges Loaded!';
         if (description) description.innerHTML = `
             <strong>Total Challenges:</strong> ${this.challenges.length}<br>
             <strong>Films:</strong> ${this.challenges.filter(c => c.type === 'Film').length}<br>
-            <strong>TV Shows:</strong> 0 (currently disabled)<br>
+            <strong>TV Shows:</strong> ${this.challenges.filter(c => c.type === 'TV Show').length}<br>
             <br>
-            <em>Every reload brings 50 completely fresh film challenges!</em><br>
-            <em>TV shows are temporarily disabled to avoid unfamiliar titles.</em>
+            <em>Every reload brings 50 completely fresh challenges!</em>
         `;
         
         if (challengeCard) challengeCard.classList.add('active');
         
         console.log(`📊 Challenges loaded: ${this.challenges.length}`);
         console.log(`📊 Films: ${this.challenges.filter(c => c.type === 'Film').length}`);
-        console.log(`📊 TV Shows: 0 (disabled)`);
-        console.log('🆕 Fresh Film Challenges Loaded!');
+        console.log(`📊 TV Shows: ${this.challenges.filter(c => c.type === 'TV Show').length}`);
+        console.log('🆕 Fresh Challenges Loaded!');
     }
 
     showModeSelection() {
